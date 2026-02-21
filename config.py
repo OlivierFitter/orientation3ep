@@ -17,7 +17,7 @@ class Config:
     MAIL_USE_TLS  = True
     MAIL_USERNAME = os.environ.get('BREVO_LOGIN', '')       # votre login Brevo
     MAIL_PASSWORD = os.environ.get('BREVO_SMTP_KEY', '')    # clé SMTP Brevo
-    MAIL_DEFAULT_SENDER = ('LeBonCap', 'noreply@leboncap.net')
+    MAIL_DEFAULT_SENDER = ('LeBonCap', 'contact@leboncap.org')
 
     # --- Sessions ---
     PERMANENT_SESSION_LIFETIME = timedelta(days=7)
@@ -28,7 +28,7 @@ class Config:
     # --- Site ---
     SITE_NAME    = 'LeBonCap'
     SITE_URL     = os.environ.get('SITE_URL', 'http://localhost:5000')
-    CONTACT_MAIL = 'olivierfitter@gmail.com'
+    CONTACT_MAIL = 'contact@leboncap.org'
 
     # --- Admin cron webhook token ---
     CRON_SECRET_TOKEN = os.environ.get('CRON_SECRET_TOKEN', '')
