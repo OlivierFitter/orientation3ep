@@ -141,6 +141,8 @@ img { max-width: 100%; height: auto; }
 .btn-outline:hover { background: var(--violet); color: var(--white); }
 .btn-white    { background: var(--white); color: var(--violet); border-color: var(--white); }
 .btn-white:hover { background: #f0d9ff; }
+.btn-outline-white { background: transparent; color: var(--white); border-color: rgba(255,255,255,0.7); }
+.btn-outline-white:hover { background: rgba(255,255,255,0.15); color: var(--white); }
 .btn-green    { background: var(--green); color: var(--white); border-color: var(--green); }
 .btn-danger   { background: var(--danger); color: var(--white); border-color: var(--danger); }
 .btn-lg       { padding: 14px 30px; font-size: 1.05rem; }
