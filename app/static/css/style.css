@@ -207,7 +207,8 @@ blockquote cite {
                   border-radius: var(--radius); padding: 28px;
                   box-shadow: var(--shadow); margin-bottom: 20px; }
 .form-group     { margin-bottom: 18px; }
-.form-group label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.9rem; }
+.form-group label { display: flex; justify-content: space-between; align-items: baseline; font-weight: 600; margin-bottom: 6px; font-size: 0.9rem; }
+.compteur { font-weight: 400; font-size: 0.8rem; color: #888; margin-left: 8px; }
 .form-group input,
 .form-group select,
 .form-group textarea {

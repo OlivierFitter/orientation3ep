@@ -2,12 +2,10 @@
 {% block content %}
 <section class="section-light">
     <div class="container form-container">
-        <h1 class="form-title">Contactez-moi 📬</h1>
+        <h1 class="form-title">Question courte ❓</h1>
         <p class="form-sub">
-            🚦 Précisez le code de votre demande :<br>
-            <strong>QC</strong> = Question courte (gratuit) |
-            <strong>AP</strong> = Accompagnement ponctuel |
-            <strong>AA</strong> = Accompagnement sur l'année
+            Posez une question précise sur l'orientation de votre enfant —
+            je vous réponds dans les plus brefs délais. <strong>Gratuit.</strong>
         </p>
 
         <form method="POST" class="form-card">
@@ -23,20 +21,13 @@
             </div>
 
             <div class="form-group">
-                <label for="code">Type de demande</label>
-                <select id="code" name="code">
-                    <option value="">-- Choisir --</option>
-                    <option value="QC">QC — Question courte (gratuit)</option>
-                    <option value="AP">AP — Accompagnement ponctuel</option>
-                    <option value="AA">AA — Accompagnement sur l'année</option>
-                    <option value="INFO">Information générale</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="message">Message *</label>
+                <label for="message">
+                    Votre question *
+                    <span id="compteur" class="compteur">0 / 1000</span>
+                </label>
                 <textarea id="message" name="message" rows="6" required
-                          placeholder="Votre message..."></textarea>
+                          maxlength="1000"
+                          placeholder="Posez votre question ici (1000 caractères maximum)..."></textarea>
             </div>
 
             <div class="form-group form-check">
@@ -48,17 +39,27 @@
                 </label>
             </div>
 
-            <button type="submit" class="btn btn-primary btn-full">Envoyer le message</button>
+            <button type="submit" class="btn btn-primary btn-full">Envoyer ma question</button>
             <p class="form-note">✅ Votre email ne sera jamais utilisé en dehors de ce site. Pas de spam.</p>
         </form>
 
         <div class="contact-whatsapp">
             <h3>💬 WhatsApp</h3>
-            <p>Une question rapide ? Contactez-moi aussi sur WhatsApp.</p>
+            <p>Vous préférez WhatsApp ? Contactez-moi directement.</p>
             <a href="https://wa.me/262XXXXXXXX" class="btn btn-green" target="_blank" rel="noopener">
                 💬 Écrire sur WhatsApp
             </a>
         </div>
     </div>
 </section>
+
+<script>
+const textarea  = document.getElementById('message');
+const compteur  = document.getElementById('compteur');
+textarea.addEventListener('input', () => {
+    const n = textarea.value.length;
+    compteur.textContent = n + ' / 1000';
+    compteur.style.color = n > 900 ? '#dc3545' : n > 750 ? '#ffc107' : '#888';
+});
+</script>
 {% endblock %}

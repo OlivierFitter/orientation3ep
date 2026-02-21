@@ -54,37 +54,39 @@ def contact():
         nom     = request.form.get('nom', '').strip()
         email   = request.form.get('email', '').strip()
         message = request.form.get('message', '').strip()
-        code    = request.form.get('code', '').strip()  # QC / AP / AA
         consent = request.form.get('rgpd_consent')
 
         if not all([nom, email, message]):
             flash('Merci de remplir tous les champs obligatoires.', 'danger')
-            return render_template('contact.html', title='Contact')
+            return render_template('contact.html', title='Question courte')
+
+        if len(message) > 1000:
+            flash('Votre question dépasse 1000 caractères.', 'danger')
+            return render_template('contact.html', title='Question courte')
 
         if not consent:
             flash('Vous devez accepter la politique de confidentialité.', 'danger')
-            return render_template('contact.html', title='Contact')
+            return render_template('contact.html', title='Question courte')
 
         try:
             msg = Message(
-                subject=f'[LeBonCap] Nouveau message - {code if code else "Contact"} - {nom}',
+                subject=f'[LeBonCap] Question courte — {nom}',
                 recipients=[current_app.config['CONTACT_MAIL']],
                 reply_to=email,
                 body=f"""
-Nouveau message depuis LeBonCap.net
+Nouvelle question courte depuis LeBonCap.net
 
-Nom    : {nom}
-Email  : {email}
-Code   : {code if code else 'Non précisé'}
+Nom   : {nom}
+Email : {email}
 
-Message :
+Question :
 {message}
 """
             )
             mail.send(msg)
-            flash('Votre message a bien été envoyé ! Je vous réponds rapidement.', 'success')
+            flash('Votre question a bien été envoyée ! Je vous réponds rapidement.', 'success')
             return redirect(url_for('public.contact'))
-        except Exception as e:
-            flash('Erreur lors de l\'envoi. Veuillez réessayer.', 'danger')
+        except Exception:
+            flash('Erreur lors de l\'envoi. Veuillez réessayer ou utiliser WhatsApp.', 'danger')
 
-    return render_template('contact.html', title='Contactez-moi')
+    return render_template('contact.html', title='Question courte')
