@@ -84,4 +84,23 @@ def create_app(config_class=Config):
             )
         click.echo(f'\nTotal : {len(users)} utilisateur(s)\n')
 
+    @app.cli.command('reset-password')
+    @click.argument('email')
+    @click.argument('new_password')
+    def reset_password(email, new_password):
+        """Réinitialise le mot de passe d'un utilisateur et confirme son compte.
+        Usage : flask reset-password email@example.com NouveauMotDePasse"""
+        from app.models.user import User
+        from werkzeug.security import generate_password_hash
+        user = User.query.filter_by(email=email).first()
+        if not user:
+            click.echo(f'❌  Aucun utilisateur trouvé avec l\'email : {email}')
+            return
+        user.password_hash = generate_password_hash(new_password)
+        user.confirme = True   # s'assure que le compte est bien confirmé
+        user.actif    = True
+        db.session.commit()
+        click.echo(f'✅  Mot de passe réinitialisé pour {user.nom} ({email}).')
+        click.echo(f'    Compte confirmé et actif.')
+
     return app
