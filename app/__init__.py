@@ -39,10 +39,6 @@ def create_app(config_class=Config):
     # Jinja globals utiles
     app.jinja_env.globals.update(enumerate=enumerate)
 
-    # Création des tables si nécessaire
-    with app.app_context():
-        db.create_all()
-
     # ─── Commandes CLI ──────────────────────────────────────────
     @app.cli.command('make-admin')
     @click.argument('email')
