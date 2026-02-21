@@ -20,15 +20,30 @@ bp = Blueprint('public', __name__)
 def setup_admin():
     """Route temporaire pour initialiser le compte admin sans Shell Render."""
     user = User.query.filter_by(email='olivierfitter@gmail.com').first()
+    created = False
     if not user:
-        return 'Utilisateur non trouvé.', 404
-    user.password_hash = generate_password_hash('LeBonCap2025!')
-    user.confirme = True
-    user.actif    = True
-    user.role     = 'admin'
+        user = User(
+            nom='Olivier Fitter',
+            email='olivierfitter@gmail.com',
+            password_hash=generate_password_hash('LeBonCap2025!'),
+            confirme=True,
+            actif=True,
+            role='admin',
+            rgpd_consent=True,
+            rgpd_consent_date=datetime.now(timezone.utc),
+            created_at=datetime.now(timezone.utc),
+        )
+        db.session.add(user)
+        created = True
+    else:
+        user.password_hash = generate_password_hash('LeBonCap2025!')
+        user.confirme = True
+        user.actif    = True
+        user.role     = 'admin'
     db.session.commit()
-    return '''
-    <h2>✅ Compte admin configuré !</h2>
+    action = "Compte créé et configuré" if created else "Compte mis à jour"
+    return f'''
+    <h2>✅ {action} !</h2>
     <p>Email : olivierfitter@gmail.com</p>
     <p>Mot de passe : <strong>LeBonCap2025!</strong></p>
     <p><a href="/auth/connexion">→ Se connecter maintenant</a></p>
