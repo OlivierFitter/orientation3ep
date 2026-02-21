@@ -6,7 +6,9 @@ class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY', 'changez-moi-en-production-clé-très-longue')
 
     # --- Base de données ---
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', 'sqlite:///leboncap.db')
+    # Render fournit parfois "postgres://" au lieu de "postgresql://" (SQLAlchemy 1.4+)
+    _db_url = os.environ.get('DATABASE_URL', 'sqlite:///leboncap.db')
+    SQLALCHEMY_DATABASE_URI = _db_url.replace('postgres://', 'postgresql://', 1) if _db_url else _db_url
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # --- Mail (Brevo SMTP) ---
@@ -31,9 +33,3 @@ class Config:
     # --- Admin cron webhook token ---
     CRON_SECRET_TOKEN = os.environ.get('CRON_SECRET_TOKEN', '')
 
-    # --- Correctif URL PostgreSQL (Render retourne parfois "postgres://") ---
-    @classmethod
-    def fix_database_url(cls):
-        url = cls.SQLALCHEMY_DATABASE_URI
-        if url and url.startswith('postgres://'):
-            cls.SQLALCHEMY_DATABASE_URI = url.replace('postgres://', 'postgresql://', 1)
