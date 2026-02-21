@@ -14,6 +14,43 @@ from app.models.event import Event, EventRegistrationPublic
 bp = Blueprint('public', __name__)
 
 
+# ─── Health check (diagnostic Render) ───────────────────────────────
+
+@bp.route('/health')
+def health():
+    """Route de diagnostic — vérifie la connexion DB et les tables."""
+    import sqlalchemy as sa
+    from flask import jsonify
+    status = {}
+    try:
+        result = db.session.execute(sa.text("SELECT 1")).scalar()
+        status['db_ping'] = 'ok'
+    except Exception as e:
+        status['db_ping'] = f'ERROR: {e}'
+
+    try:
+        inspector = sa.inspect(db.engine)
+        status['tables'] = sorted(inspector.get_table_names())
+    except Exception as e:
+        status['tables'] = f'ERROR: {e}'
+
+    try:
+        rev = db.session.execute(
+            sa.text("SELECT version_num FROM alembic_version LIMIT 1")
+        ).scalar()
+        status['alembic_version'] = rev or 'empty'
+    except Exception as e:
+        status['alembic_version'] = f'no table or error: {e}'
+
+    try:
+        user_count = db.session.execute(sa.text("SELECT COUNT(*) FROM users")).scalar()
+        status['user_count'] = user_count
+    except Exception as e:
+        status['user_count'] = f'ERROR: {e}'
+
+    return jsonify(status)
+
+
 # ─── Pages publiques ────────────────────────────────────────────────
 
 @bp.route('/')
