@@ -17,8 +17,11 @@ class User(UserMixin, db.Model):
     created_at    = db.Column(db.DateTime, default=datetime.utcnow)
 
     # RGPD
-    rgpd_consent     = db.Column(db.Boolean, default=False)
+    rgpd_consent      = db.Column(db.Boolean, default=False)
     rgpd_consent_date = db.Column(db.DateTime, nullable=True)
+
+    # Flags spéciaux
+    parcoursup_2026   = db.Column(db.Boolean, default=False)  # inscrit via formulaire urgence
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)

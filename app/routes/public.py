@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, current_app
 from flask_mail import Message
-from app import mail
+from app import mail, db
+from app.models.user import User
 
 bp = Blueprint('public', __name__)
 
@@ -90,3 +91,83 @@ Question :
             flash('Erreur lors de l\'envoi. Veuillez réessayer ou utiliser WhatsApp.', 'danger')
 
     return render_template('contact.html', title='Question courte')
+
+
+# ─── Formulaire Parcoursup 2026 ─────────────────────────────────────
+
+@bp.route('/parcoursup-2026', methods=['GET', 'POST'])
+def parcoursup_2026():
+    from datetime import datetime, timezone
+
+    if request.method == 'POST':
+        nom      = request.form.get('nom', '').strip()
+        email    = request.form.get('email', '').strip()
+        question = request.form.get('question', '').strip()
+        consent  = request.form.get('rgpd_consent')
+
+        if not all([nom, email, question]):
+            flash('Merci de remplir tous les champs obligatoires.', 'danger')
+            return render_template('parcoursup_2026.html', title='Urgence Parcoursup 2026')
+
+        if len(question) > 1000:
+            flash('Votre question dépasse 1000 caractères.', 'danger')
+            return render_template('parcoursup_2026.html', title='Urgence Parcoursup 2026')
+
+        if not consent:
+            flash('Vous devez accepter la politique de confidentialité.', 'danger')
+            return render_template('parcoursup_2026.html', title='Urgence Parcoursup 2026')
+
+        # Inscription automatique si l'email n'existe pas encore
+        user = User.query.filter_by(email=email).first()
+        inscrit = False
+        if not user:
+            import secrets
+            from werkzeug.security import generate_password_hash
+            tmp_pwd = secrets.token_hex(16)
+            user = User(
+                nom=nom,
+                email=email,
+                password_hash=generate_password_hash(tmp_pwd),
+                confirme=False,
+                actif=True,
+                rgpd_consent=True,
+                rgpd_consent_date=datetime.now(timezone.utc),
+                parcoursup_2026=True
+            )
+            db.session.add(user)
+            try:
+                db.session.commit()
+                inscrit = True
+            except Exception:
+                db.session.rollback()
+
+        # Envoi du mail de notification
+        try:
+            msg = Message(
+                subject=f'[LeBonCap] 🚨 Parcoursup 2026 — {nom}',
+                recipients=[current_app.config['CONTACT_MAIL']],
+                reply_to=email,
+                body=f"""
+🚨 Nouvelle question PARCOURSUP 2026 depuis LeBonCap.net
+{'✅ Nouvel inscrit !' if inscrit else '(utilisateur déjà inscrit)'}
+
+Nom   : {nom}
+Email : {email}
+
+Question :
+{question}
+"""
+            )
+            mail.send(msg)
+        except Exception:
+            pass  # Le mail est secondaire, l'inscription est prioritaire
+
+        flash(
+            '✅ Votre question a bien été reçue ! '
+            + ('Vous êtes également inscrit(e) sur LeBonCap — vous recevrez nos conseils gratuits. ' if inscrit else '')
+            + 'Je vous réponds au plus vite.',
+            'success'
+        )
+        return redirect(url_for('public.parcoursup_2026'))
+
+    return render_template('parcoursup_2026.html', title='Urgence Parcoursup 2026')
