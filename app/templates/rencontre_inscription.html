@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="section-light">
+    <div class="container form-container">
+
+        <!-- Info événement -->
+        <div class="event-recap-box">
+            <span class="event-recap-mode {{ 'event-badge-visio' if event.mode == 'visio' else 'event-badge-presentiel' }}">
+                {{ '🖥️ Visio' if event.mode == 'visio' else '📍 Présentiel' }}
+            </span>
+            <h2 class="event-recap-titre">{{ event.titre }}</h2>
+            <p class="event-recap-date">
+                📅 {{ event.date_event.strftime('%A %d %B %Y à %Hh%M') }}
+            </p>
+            {% if event.mode == 'presentiel' and event.lieu %}
+            <p class="event-recap-lieu">📍 {{ event.lieu }}</p>
+            {% endif %}
+            <div class="event-places" style="margin-top:8px;">
+                {% if event.est_complet %}
+                <span class="places-badge places-full">Complet — inscription sur liste d'attente</span>
+                {% else %}
+                <span class="places-badge places-ok">
+                    {{ event.places_restantes }} place{{ 's' if event.places_restantes > 1 }} restante{{ 's' if event.places_restantes > 1 }}
+                </span>
+                {% endif %}
+            </div>
+        </div>
+
+        <h1 class="form-title" style="margin-top:20px;">
+            {% if event.est_complet %}⏳ Liste d'attente{% else %}✅ Inscription{% endif %}
+        </h1>
+        <p class="form-sub">
+            {% if event.est_complet %}
+            L'événement est complet. Laissez vos coordonnées pour être prévenu.e si une place se libère.
+            {% else %}
+            Remplissez le formulaire ci-dessous. Un email de confirmation vous sera envoyé.
+            {% endif %}
+        </p>
+
+        <form method="POST" class="form-card">
+
+            <div class="form-group">
+                <label for="nom">Nom *</label>
+                <input type="text" id="nom" name="nom" required placeholder="Votre nom">
+            </div>
+
+            <div class="form-group">
+                <label for="email">Adresse e-mail *</label>
+                <input type="email" id="email" name="email" required placeholder="votre@email.com">
+                <small class="form-note" style="margin-top:4px;">La confirmation sera envoyée à cette adresse.</small>
+            </div>
+
+            <div class="form-group">
+                <label for="telephone">Téléphone <span style="font-weight:400;font-size:0.85rem;">(optionnel)</span></label>
+                <input type="tel" id="telephone" name="telephone" placeholder="06 xx xx xx xx">
+            </div>
+
+            <div class="form-group form-check">
+                <input type="checkbox" id="rgpd_consent" name="rgpd_consent" required>
+                <label for="rgpd_consent">
+                    J'accepte que mes coordonnées soient utilisées dans le cadre de cette inscription,
+                    conformément à la
+                    <a href="{{ url_for('public.politique_confidentialite') }}" target="_blank">politique de confidentialité</a>. *
+                </label>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-full btn-lg">
+                {% if event.est_complet %}
+                ⏳ M'inscrire sur la liste d'attente
+                {% else %}
+                ✅ Confirmer mon inscription
+                {% endif %}
+            </button>
+            <p class="form-note">Un email de confirmation vous sera envoyé. Vous pourrez vous désinscrire à tout moment.</p>
+
+        </form>
+
+        <div style="text-align:center; margin-top:16px;">
+            <a href="{{ url_for('public.rencontres') }}" class="btn btn-outline">← Retour au calendrier</a>
+        </div>
+
+    </div>
+</section>
+{% endblock %}

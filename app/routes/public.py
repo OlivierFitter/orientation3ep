@@ -1,9 +1,18 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for, current_app
+from datetime import datetime, timezone
+import secrets
+
+from flask import (Blueprint, render_template, request, flash,
+                   redirect, url_for, current_app)
 from flask_mail import Message
+from werkzeug.security import generate_password_hash
+
 from app import mail, db
 from app.models.user import User
+from app.models.contact import ContactRequest, QuestionMessage, Parcoursup2026Message
+from app.models.event import Event, EventRegistrationPublic
 
 bp = Blueprint('public', __name__)
+
 
 # ─── Pages publiques ────────────────────────────────────────────────
 
@@ -18,10 +27,6 @@ def comment_orienter():
 @bp.route('/prestations')
 def prestations():
     return render_template('prestations.html', title='Les Prestations')
-
-@bp.route('/rencontres')
-def rencontres():
-    return render_template('rencontres.html', title='Rencontres')
 
 @bp.route('/blog')
 def blog():
@@ -47,7 +52,222 @@ def mentions_legales():
 def politique_confidentialite():
     return render_template('politique_confidentialite.html', title='Politique de confidentialité')
 
-# ─── Formulaire de contact ──────────────────────────────────────────
+
+# ─── Rencontres publiques ────────────────────────────────────────────
+
+@bp.route('/rencontres')
+def rencontres():
+    events = Event.query.filter_by(is_published=True).order_by(Event.date_event).all()
+    return render_template('rencontres.html', title='Rencontres', events=events)
+
+
+@bp.route('/rencontres/<int:id>')
+def rencontre_detail(id):
+    event = Event.query.filter_by(id=id, is_published=True).first_or_404()
+    return render_template('rencontre_detail.html', title=event.titre, event=event)
+
+
+@bp.route('/rencontres/<int:id>/inscrire', methods=['GET', 'POST'])
+def rencontre_inscrire(id):
+    event = Event.query.filter_by(id=id, is_published=True).first_or_404()
+
+    if event.est_passe:
+        flash('Cet événement est déjà passé.', 'warning')
+        return redirect(url_for('public.rencontres'))
+
+    if request.method == 'POST':
+        nom       = request.form.get('nom', '').strip()
+        email     = request.form.get('email', '').strip()
+        telephone = request.form.get('telephone', '').strip()
+        consent   = request.form.get('rgpd_consent')
+
+        if not all([nom, email]):
+            flash('Nom et email sont obligatoires.', 'danger')
+            return render_template('rencontre_inscription.html', event=event)
+
+        if not consent:
+            flash('Vous devez accepter la politique de confidentialité.', 'danger')
+            return render_template('rencontre_inscription.html', event=event)
+
+        # Vérifier si déjà inscrit
+        deja = EventRegistrationPublic.query.filter_by(
+            event_id=id, email=email
+        ).first()
+        if deja and deja.status != 'cancelled':
+            flash('Vous êtes déjà inscrit(e) à cette rencontre.', 'warning')
+            return redirect(url_for('public.rencontres'))
+
+        # Calcul du statut (confirmé ou liste d'attente)
+        places = event.places_restantes
+        statut = 'confirmed' if places > 0 else 'waitlist'
+
+        reg = EventRegistrationPublic(
+            event_id=id,
+            nom=nom, email=email,
+            telephone=telephone or None,
+            status=statut,
+            rgpd_consent=True
+        )
+        db.session.add(reg)
+        db.session.commit()
+
+        # Email de confirmation
+        try:
+            if statut == 'confirmed':
+                sujet = f'✅ Inscription confirmée — {event.titre}'
+                corps = f"""Bonjour {nom},
+
+Votre inscription à la rencontre "{event.titre}" est confirmée !
+
+📅 Date : {event.date_event.strftime('%A %d %B %Y à %Hh%M')}
+{'🖥️ Mode : Visioconférence' if event.mode == 'visio' else f'📍 Lieu : {event.lieu or "à préciser"}'}
+{'🔗 Lien de connexion : ' + (event.lieu or 'sera envoyé prochainement') if event.mode == 'visio' else ''}
+
+Pour annuler votre inscription :
+{url_for('public.rencontre_annuler', token=reg.token, _external=True)}
+
+À bientôt !
+Olivier Fitter — LeBonCap"""
+            else:
+                sujet = f'⏳ Liste d\'attente — {event.titre}'
+                corps = f"""Bonjour {nom},
+
+L'événement "{event.titre}" est complet, mais vous êtes inscrit(e) sur la liste d'attente.
+Vous serez prévenu(e) par email si une place se libère.
+
+Pour annuler votre demande :
+{url_for('public.rencontre_annuler', token=reg.token, _external=True)}
+
+Olivier Fitter — LeBonCap"""
+
+            msg = Message(
+                subject=sujet,
+                recipients=[email],
+                body=corps
+            )
+            mail.send(msg)
+        except Exception:
+            pass  # L'inscription est prioritaire, l'email est secondaire
+
+        # Notification admin
+        try:
+            msg_admin = Message(
+                subject=f'[LeBonCap] Nouvelle inscription — {event.titre}',
+                recipients=[current_app.config['CONTACT_MAIL']],
+                body=f"""Nouvelle inscription à "{event.titre}"
+Nom    : {nom}
+Email  : {email}
+Tel    : {telephone or '-'}
+Statut : {statut}
+Places restantes : {event.places_restantes}"""
+            )
+            mail.send(msg_admin)
+        except Exception:
+            pass
+
+        if statut == 'confirmed':
+            flash(f'✅ Inscription confirmée ! Un email de confirmation vous a été envoyé.', 'success')
+        else:
+            flash('⏳ L\'événement est complet. Vous avez été ajouté(e) sur la liste d\'attente.', 'warning')
+        return redirect(url_for('public.rencontres'))
+
+    return render_template('rencontre_inscription.html', title=f'Inscription — {event.titre}', event=event)
+
+
+@bp.route('/rencontres/annuler/<token>')
+def rencontre_annuler(token):
+    reg = EventRegistrationPublic.query.filter_by(token=token).first_or_404()
+    if reg.status == 'cancelled':
+        flash('Cette inscription est déjà annulée.', 'info')
+        return redirect(url_for('public.rencontres'))
+
+    reg.status = 'cancelled'
+    db.session.commit()
+
+    # Promouvoir le premier de la liste d'attente
+    if reg.event.places_restantes > 0:
+        premier_attente = EventRegistrationPublic.query.filter_by(
+            event_id=reg.event_id, status='waitlist'
+        ).order_by(EventRegistrationPublic.created_at).first()
+        if premier_attente:
+            premier_attente.status = 'confirmed'
+            db.session.commit()
+            try:
+                msg = Message(
+                    subject=f'✅ Place disponible — {reg.event.titre}',
+                    recipients=[premier_attente.email],
+                    body=f"""Bonne nouvelle {premier_attente.nom} !
+
+Une place s'est libérée pour "{reg.event.titre}" — votre inscription est maintenant confirmée !
+
+📅 Date : {reg.event.date_event.strftime('%A %d %B %Y à %Hh%M')}
+
+Pour annuler :
+{url_for('public.rencontre_annuler', token=premier_attente.token, _external=True)}
+
+Olivier Fitter — LeBonCap"""
+                )
+                mail.send(msg)
+            except Exception:
+                pass
+
+    flash('Votre inscription a bien été annulée.', 'success')
+    return redirect(url_for('public.rencontres'))
+
+
+# ─── Formulaire de recontact ─────────────────────────────────────────
+
+@bp.route('/recontact', methods=['GET', 'POST'])
+def recontact():
+    if request.method == 'POST':
+        nom       = request.form.get('nom', '').strip()
+        email     = request.form.get('email', '').strip()
+        telephone = request.form.get('telephone', '').strip()
+        consent   = request.form.get('rgpd_consent')
+
+        if not all([nom, email]):
+            flash('Nom et email sont obligatoires.', 'danger')
+            return render_template('recontact.html', title='Être recontacté.e')
+
+        if not consent:
+            flash('Vous devez accepter la politique de confidentialité.', 'danger')
+            return render_template('recontact.html', title='Être recontacté.e')
+
+        # Enregistrement en BDD
+        cr = ContactRequest(
+            nom=nom, email=email,
+            telephone=telephone or None,
+            rgpd_consent=True
+        )
+        db.session.add(cr)
+        db.session.commit()
+
+        # Email de notification admin
+        try:
+            msg = Message(
+                subject=f'[LeBonCap] 📬 Demande de recontact — {nom}',
+                recipients=[current_app.config['CONTACT_MAIL']],
+                reply_to=email,
+                body=f"""Nouvelle demande de recontact depuis LeBonCap
+
+Nom       : {nom}
+Email     : {email}
+Téléphone : {telephone or '-'}
+Date      : {datetime.now().strftime('%d/%m/%Y %H:%M')}
+
+→ Répondre : {url_for('admin.contacts', _external=True)}"""
+            )
+            mail.send(msg)
+        except Exception:
+            pass
+
+        flash('✅ Votre demande a bien été reçue ! Je vous recontacte très prochainement.', 'success')
+        return redirect(url_for('public.recontact'))
+
+    return render_template('recontact.html', title='Être recontacté.e')
+
+
+# ─── Formulaire de contact (question courte) ─────────────────────────
 
 @bp.route('/contact', methods=['GET', 'POST'])
 def contact():
@@ -69,20 +289,24 @@ def contact():
             flash('Vous devez accepter la politique de confidentialité.', 'danger')
             return render_template('contact.html', title='Question courte')
 
+        # Enregistrement en BDD
+        qm = QuestionMessage(nom=nom, email=email, message=message)
+        db.session.add(qm)
+        db.session.commit()
+
+        # Email de notification
         try:
             msg = Message(
                 subject=f'[LeBonCap] Question courte — {nom}',
                 recipients=[current_app.config['CONTACT_MAIL']],
                 reply_to=email,
-                body=f"""
-Nouvelle question courte depuis LeBonCap.net
+                body=f"""Nouvelle question courte depuis LeBonCap.net
 
 Nom   : {nom}
 Email : {email}
 
 Question :
-{message}
-"""
+{message}"""
             )
             mail.send(msg)
             flash('Votre question a bien été envoyée ! Je vous réponds rapidement.', 'success')
@@ -97,8 +321,6 @@ Question :
 
 @bp.route('/parcoursup-2026', methods=['GET', 'POST'])
 def parcoursup_2026():
-    from datetime import datetime, timezone
-
     if request.method == 'POST':
         nom      = request.form.get('nom', '').strip()
         email    = request.form.get('email', '').strip()
@@ -117,54 +339,54 @@ def parcoursup_2026():
             flash('Vous devez accepter la politique de confidentialité.', 'danger')
             return render_template('parcoursup_2026.html', title='Urgence Parcoursup 2026')
 
+        # Enregistrement message en BDD
+        pm = Parcoursup2026Message(nom=nom, email=email, message=question)
+        db.session.add(pm)
+
         # Inscription automatique si l'email n'existe pas encore
         user = User.query.filter_by(email=email).first()
         inscrit = False
         if not user:
-            import secrets
-            from werkzeug.security import generate_password_hash
             tmp_pwd = secrets.token_hex(16)
             user = User(
-                nom=nom,
-                email=email,
+                nom=nom, email=email,
                 password_hash=generate_password_hash(tmp_pwd),
-                confirme=False,
-                actif=True,
+                confirme=False, actif=True,
                 rgpd_consent=True,
                 rgpd_consent_date=datetime.now(timezone.utc),
                 parcoursup_2026=True
             )
             db.session.add(user)
-            try:
-                db.session.commit()
-                inscrit = True
-            except Exception:
-                db.session.rollback()
+            inscrit = True
 
-        # Envoi du mail de notification
+        try:
+            db.session.commit()
+        except Exception:
+            db.session.rollback()
+
+        # Email de notification
         try:
             msg = Message(
                 subject=f'[LeBonCap] 🚨 Parcoursup 2026 — {nom}',
                 recipients=[current_app.config['CONTACT_MAIL']],
                 reply_to=email,
-                body=f"""
-🚨 Nouvelle question PARCOURSUP 2026 depuis LeBonCap.net
-{'✅ Nouvel inscrit !' if inscrit else '(utilisateur déjà inscrit)'}
+                body=f"""🚨 Nouvelle question PARCOURSUP 2026
+{'✅ Nouvel inscrit !' if inscrit else '(utilisateur existant)'}
 
 Nom   : {nom}
 Email : {email}
 
 Question :
-{question}
-"""
+{question}"""
             )
             mail.send(msg)
         except Exception:
-            pass  # Le mail est secondaire, l'inscription est prioritaire
+            pass
 
         flash(
             '✅ Votre question a bien été reçue ! '
-            + ('Vous êtes également inscrit(e) sur LeBonCap — vous recevrez nos conseils gratuits. ' if inscrit else '')
+            + ('Vous êtes également inscrit(e) sur LeBonCap — vous recevrez nos conseils gratuits. '
+               if inscrit else '')
             + 'Je vous réponds au plus vite.',
             'success'
         )

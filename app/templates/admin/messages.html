@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="section-light">
+<div class="container admin-container">
+
+    <div class="admin-header">
+        <h1>💬 Messages reçus</h1>
+        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline btn-sm">← Dashboard</a>
+    </div>
+
+    <!-- Filtres -->
+    <div class="admin-filters">
+        <a href="{{ url_for('admin.messages', filtre='non_lus') }}"
+           class="btn btn-sm {% if filtre == 'non_lus' %}btn-primary{% else %}btn-outline{% endif %}">Non lus</a>
+        <a href="{{ url_for('admin.messages', filtre='lus') }}"
+           class="btn btn-sm {% if filtre == 'lus' %}btn-primary{% else %}btn-outline{% endif %}">Lus</a>
+        <a href="{{ url_for('admin.messages', filtre='tous') }}"
+           class="btn btn-sm {% if filtre == 'tous' %}btn-primary{% else %}btn-outline{% endif %}">Tous</a>
+    </div>
+
+    <!-- Questions courtes -->
+    <h2 class="admin-section-title">❓ Questions courtes</h2>
+    {% if items.items %}
+    <table class="admin-table admin-table-full">
+        <thead><tr><th>#</th><th>Nom</th><th>Email</th><th>Message</th><th>Date</th><th></th></tr></thead>
+        <tbody>
+        {% for q in items.items %}
+        <tr class="{% if not q.is_read %}row-unread{% endif %}">
+            <td class="td-id">{{ q.id }}</td>
+            <td><strong>{{ q.nom }}</strong></td>
+            <td><a href="mailto:{{ q.email }}">{{ q.email }}</a></td>
+            <td class="td-message">{{ q.message }}</td>
+            <td class="td-date">{{ q.created_at.strftime('%d/%m/%Y %H:%M') }}</td>
+            <td>
+                {% if not q.is_read %}
+                <form method="POST" action="{{ url_for('admin.message_lire', id=q.id) }}">
+                    <button class="btn btn-sm btn-outline">✓ Lu</button>
+                </form>
+                {% else %}<span class="text-muted">✅</span>{% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="admin-empty">Aucune question courte.</p>
+    {% endif %}
+
+    <!-- Parcoursup 2026 -->
+    <h2 class="admin-section-title" style="margin-top:32px;">🚨 Parcoursup 2026</h2>
+    {% if items_pc.items %}
+    <table class="admin-table admin-table-full">
+        <thead><tr><th>#</th><th>Nom</th><th>Email</th><th>Question</th><th>Date</th><th></th></tr></thead>
+        <tbody>
+        {% for p in items_pc.items %}
+        <tr class="{% if not p.is_read %}row-unread{% endif %}">
+            <td class="td-id">{{ p.id }}</td>
+            <td><strong>{{ p.nom }}</strong></td>
+            <td><a href="mailto:{{ p.email }}">{{ p.email }}</a></td>
+            <td class="td-message">{{ p.message }}</td>
+            <td class="td-date">{{ p.created_at.strftime('%d/%m/%Y %H:%M') }}</td>
+            <td>
+                {% if not p.is_read %}
+                <form method="POST" action="{{ url_for('admin.parcoursup_lire', id=p.id) }}">
+                    <button class="btn btn-sm btn-outline">✓ Lu</button>
+                </form>
+                {% else %}<span class="text-muted">✅</span>{% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="admin-empty">Aucun message Parcoursup 2026.</p>
+    {% endif %}
+
+</div>
+</section>
+{% endblock %}

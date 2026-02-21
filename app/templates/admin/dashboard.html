@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="section-light">
+<div class="container admin-container">
+
+    <div class="admin-header">
+        <h1>🛡️ Tableau de bord Admin</h1>
+        <p class="admin-sub">Bienvenue, {{ current_user.nom }} — LeBonCap</p>
+    </div>
+
+    <!-- Statistiques -->
+    <div class="admin-stats-grid">
+        <a href="{{ url_for('admin.contacts') }}" class="stat-card {% if stats.contacts_non_lus > 0 %}stat-alert{% endif %}">
+            <span class="stat-number">{{ stats.contacts_non_lus }}</span>
+            <span class="stat-label">Recontacts<br>non lus</span>
+        </a>
+        <a href="{{ url_for('admin.messages') }}" class="stat-card {% if stats.questions_non_lues > 0 %}stat-alert{% endif %}">
+            <span class="stat-number">{{ stats.questions_non_lues }}</span>
+            <span class="stat-label">Questions<br>non lues</span>
+        </a>
+        <a href="{{ url_for('admin.messages') }}" class="stat-card {% if stats.parcoursup_non_lus > 0 %}stat-alert{% endif %}">
+            <span class="stat-number">{{ stats.parcoursup_non_lus }}</span>
+            <span class="stat-label">Parcoursup 2026<br>non lus</span>
+        </a>
+        <a href="{{ url_for('admin.rencontres') }}" class="stat-card">
+            <span class="stat-number">{{ stats.events_a_venir }}</span>
+            <span class="stat-label">Rencontres<br>à venir</span>
+        </a>
+        <div class="stat-card stat-neutral">
+            <span class="stat-number">{{ stats.inscrits_semaine }}</span>
+            <span class="stat-label">Inscriptions<br>cette semaine</span>
+        </div>
+    </div>
+
+    <!-- Actions rapides -->
+    <div class="admin-actions">
+        <a href="{{ url_for('admin.rencontre_new') }}" class="btn btn-primary">➕ Créer une rencontre</a>
+        <a href="{{ url_for('admin.resume') }}" class="btn btn-outline">📊 Voir le résumé</a>
+        <a href="{{ url_for('admin.contacts') }}" class="btn btn-outline">📬 Tous les recontacts</a>
+        <a href="{{ url_for('admin.messages') }}" class="btn btn-outline">💬 Tous les messages</a>
+    </div>
+
+    <div class="admin-two-col">
+
+        <!-- Derniers recontacts non lus -->
+        <div class="admin-panel">
+            <h2 class="admin-panel-title">📬 Recontacts non lus
+                {% if stats.contacts_non_lus > 0 %}
+                <span class="badge-count">{{ stats.contacts_non_lus }}</span>
+                {% endif %}
+            </h2>
+            {% if derniers_contacts %}
+            <table class="admin-table">
+                <thead><tr><th>Nom</th><th>Email</th><th>Date</th><th></th></tr></thead>
+                <tbody>
+                {% for c in derniers_contacts %}
+                <tr>
+                    <td>{{ c.nom }}</td>
+                    <td><a href="mailto:{{ c.email }}">{{ c.email }}</a></td>
+                    <td class="td-date">{{ c.created_at.strftime('%d/%m %H:%M') }}</td>
+                    <td>
+                        <form method="POST" action="{{ url_for('admin.contact_lire', id=c.id) }}">
+                            <button class="btn btn-sm btn-outline">✓ Lu</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p class="admin-empty">Aucun recontact non lu. ✅</p>
+            {% endif %}
+        </div>
+
+        <!-- Dernières questions non lues -->
+        <div class="admin-panel">
+            <h2 class="admin-panel-title">💬 Questions non lues
+                {% if stats.questions_non_lues > 0 %}
+                <span class="badge-count">{{ stats.questions_non_lues }}</span>
+                {% endif %}
+            </h2>
+            {% if dernieres_questions %}
+            <table class="admin-table">
+                <thead><tr><th>Nom</th><th>Aperçu</th><th>Date</th><th></th></tr></thead>
+                <tbody>
+                {% for q in dernieres_questions %}
+                <tr>
+                    <td>{{ q.nom }}</td>
+                    <td class="td-preview">{{ q.message[:60] }}{% if q.message|length > 60 %}…{% endif %}</td>
+                    <td class="td-date">{{ q.created_at.strftime('%d/%m %H:%M') }}</td>
+                    <td>
+                        <form method="POST" action="{{ url_for('admin.message_lire', id=q.id) }}">
+                            <button class="btn btn-sm btn-outline">✓ Lu</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p class="admin-empty">Aucune question non lue. ✅</p>
+            {% endif %}
+        </div>
+
+    </div>
+
+    <!-- Prochaines rencontres -->
+    <div class="admin-panel" style="margin-top:24px;">
+        <h2 class="admin-panel-title">🗓️ Prochaines rencontres</h2>
+        {% if prochains_events %}
+        <table class="admin-table">
+            <thead><tr><th>Titre</th><th>Date</th><th>Mode</th><th>Places</th><th>Statut</th><th>Actions</th></tr></thead>
+            <tbody>
+            {% for e in prochains_events %}
+            <tr>
+                <td><strong>{{ e.titre }}</strong><br><small class="text-muted">{{ e.thematique }}</small></td>
+                <td class="td-date">{{ e.date_event.strftime('%d/%m/%Y %Hh%M') }}</td>
+                <td>{{ '🖥️ Visio' if e.mode == 'visio' else '📍 Présentiel' }}</td>
+                <td>
+                    <span class="{% if e.est_complet %}badge-danger{% else %}badge-ok{% endif %}">
+                        {{ e.places_confirmees }}/{{ e.places_max }}
+                    </span>
+                </td>
+                <td>
+                    {% if e.is_published %}
+                    <span class="badge-published">Publié</span>
+                    {% else %}
+                    <span class="badge-draft">Brouillon</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{{ url_for('admin.rencontre_inscrits', id=e.id) }}" class="btn btn-sm btn-outline">👥 Inscrits</a>
+                    <a href="{{ url_for('admin.rencontre_edit', id=e.id) }}" class="btn btn-sm btn-outline">✏️</a>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="admin-empty">Aucune rencontre à venir. <a href="{{ url_for('admin.rencontre_new') }}">En créer une →</a></p>
+        {% endif %}
+    </div>
+
+</div>
+</section>
+{% endblock %}

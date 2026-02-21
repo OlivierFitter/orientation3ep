@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="section-light">
+<div class="container admin-container">
+
+    <div class="admin-header">
+        <h1>👥 Inscrits — {{ event.titre }}</h1>
+        <div style="display:flex;gap:10px;">
+            <a href="{{ url_for('admin.rencontre_edit', id=event.id) }}" class="btn btn-outline btn-sm">✏️ Modifier</a>
+            <a href="{{ url_for('admin.rencontres') }}" class="btn btn-outline btn-sm">← Rencontres</a>
+        </div>
+    </div>
+
+    <!-- Infos événement -->
+    <div class="admin-panel" style="margin-bottom:20px; background:#f9f4ff; border:1px solid #c9a8e8;">
+        <div style="display:grid; grid-template-columns: repeat(auto-fit,minmax(180px,1fr)); gap:12px;">
+            <div><strong>📅 Date</strong><br>{{ event.date_event.strftime('%d/%m/%Y à %Hh%M') }}</div>
+            <div><strong>{{ event.mode_label }}</strong><br>{{ event.lieu or '—' }}</div>
+            <div><strong>🎯 Places</strong><br>
+                <span class="{% if event.est_complet %}badge-danger{% else %}badge-ok{% endif %}">
+                    {{ event.places_confirmees }}/{{ event.places_max }} confirmés
+                </span>
+            </div>
+            <div><strong>⏳ Liste d'attente</strong><br>{{ event.public_registrations.filter_by(status='waitlist').count() }} personne(s)</div>
+        </div>
+    </div>
+
+    <!-- Confirmés -->
+    <div class="admin-panel">
+        <h2 class="admin-panel-title">✅ Inscrits confirmés ({{ confirmes|length }})</h2>
+        {% if confirmes %}
+        <table class="admin-table admin-table-full">
+            <thead><tr><th>Nom</th><th>Email</th><th>Téléphone</th><th>Date inscription</th></tr></thead>
+            <tbody>
+            {% for r in confirmes %}
+            <tr>
+                <td><strong>{{ r.nom }}</strong></td>
+                <td><a href="mailto:{{ r.email }}">{{ r.email }}</a></td>
+                <td>{{ r.telephone or '—' }}</td>
+                <td class="td-date">{{ r.created_at.strftime('%d/%m/%Y %H:%M') }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="admin-empty">Aucun inscrit confirmé.</p>
+        {% endif %}
+    </div>
+
+    <!-- Liste d'attente -->
+    {% if attente %}
+    <div class="admin-panel" style="margin-top:16px;">
+        <h2 class="admin-panel-title">⏳ Liste d'attente ({{ attente|length }})</h2>
+        <table class="admin-table admin-table-full">
+            <thead><tr><th>#</th><th>Nom</th><th>Email</th><th>Date demande</th></tr></thead>
+            <tbody>
+            {% for i, r in enumerate(attente) %}
+            <tr>
+                <td>{{ i+1 }}</td>
+                <td>{{ r.nom }}</td>
+                <td><a href="mailto:{{ r.email }}">{{ r.email }}</a></td>
+                <td class="td-date">{{ r.created_at.strftime('%d/%m/%Y %H:%M') }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    <!-- Annulés -->
+    {% if annules %}
+    <div class="admin-panel" style="margin-top:16px; opacity:0.7;">
+        <h2 class="admin-panel-title">❌ Annulés ({{ annules|length }})</h2>
+        <table class="admin-table admin-table-full">
+            <thead><tr><th>Nom</th><th>Email</th><th>Date</th></tr></thead>
+            <tbody>
+            {% for r in annules %}
+            <tr><td>{{ r.nom }}</td><td>{{ r.email }}</td><td class="td-date">{{ r.created_at.strftime('%d/%m/%Y') }}</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+</div>
+</section>
+{% endblock %}

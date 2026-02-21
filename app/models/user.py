@@ -20,8 +20,15 @@ class User(UserMixin, db.Model):
     rgpd_consent      = db.Column(db.Boolean, default=False)
     rgpd_consent_date = db.Column(db.DateTime, nullable=True)
 
+    # Rôle
+    role              = db.Column(db.String(20), default='user')   # 'user' | 'admin'
+
     # Flags spéciaux
     parcoursup_2026   = db.Column(db.Boolean, default=False)  # inscrit via formulaire urgence
+
+    @property
+    def is_admin(self):
+        return self.role == 'admin'
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)

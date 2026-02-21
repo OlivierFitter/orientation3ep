@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head><meta charset="UTF-8"><title>Résumé LeBonCap</title></head>
+<body style="font-family:Arial,sans-serif;color:#333;max-width:600px;margin:0 auto;padding:20px;">
+
+<div style="background:#6B3FA0;color:#fff;padding:20px;border-radius:8px;margin-bottom:20px;">
+    <h1 style="margin:0;font-size:1.3rem;">📊 Résumé LeBonCap</h1>
+    <p style="margin:6px 0 0;opacity:0.9;">Depuis le {{ depuis.strftime('%d/%m/%Y') }}</p>
+</div>
+
+{% set total = contacts|length + questions|length + parcoursup|length + inscrits|length %}
+<p><strong>{{ total }} élément(s) à traiter</strong></p>
+
+{% if contacts %}
+<h2 style="color:#6B3FA0;border-bottom:2px solid #6B3FA0;padding-bottom:6px;">📬 Demandes de recontact ({{ contacts|length }})</h2>
+<table style="width:100%;border-collapse:collapse;margin-bottom:16px;">
+    <tr style="background:#f0e6ff;"><th style="padding:8px;text-align:left;">Nom</th><th style="padding:8px;text-align:left;">Email</th><th style="padding:8px;text-align:left;">Tél</th></tr>
+    {% for c in contacts %}
+    <tr style="border-bottom:1px solid #eee;">
+        <td style="padding:8px;">{{ c.nom }}</td>
+        <td style="padding:8px;"><a href="mailto:{{ c.email }}" style="color:#6B3FA0;">{{ c.email }}</a></td>
+        <td style="padding:8px;">{{ c.telephone or '—' }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endif %}
+
+{% if questions %}
+<h2 style="color:#6B3FA0;border-bottom:2px solid #6B3FA0;padding-bottom:6px;">❓ Questions courtes ({{ questions|length }})</h2>
+{% for q in questions %}
+<div style="background:#f9f9f9;border-left:4px solid #6B3FA0;padding:12px;margin-bottom:10px;border-radius:0 6px 6px 0;">
+    <strong>{{ q.nom }}</strong> — <a href="mailto:{{ q.email }}" style="color:#6B3FA0;">{{ q.email }}</a><br>
+    <span style="color:#555;font-size:0.9em;">{{ q.created_at.strftime('%d/%m à %H:%M') }}</span>
+    <p style="margin:8px 0 0;">{{ q.message }}</p>
+</div>
+{% endfor %}
+{% endif %}
+
+{% if parcoursup %}
+<h2 style="color:#dc3545;border-bottom:2px solid #dc3545;padding-bottom:6px;">🚨 Questions Parcoursup 2026 ({{ parcoursup|length }})</h2>
+{% for p in parcoursup %}
+<div style="background:#fff5f5;border-left:4px solid #dc3545;padding:12px;margin-bottom:10px;border-radius:0 6px 6px 0;">
+    <strong>{{ p.nom }}</strong> — <a href="mailto:{{ p.email }}" style="color:#dc3545;">{{ p.email }}</a><br>
+    <span style="color:#555;font-size:0.9em;">{{ p.created_at.strftime('%d/%m à %H:%M') }}</span>
+    <p style="margin:8px 0 0;">{{ p.message }}</p>
+</div>
+{% endfor %}
+{% endif %}
+
+{% if inscrits %}
+<h2 style="color:#6B3FA0;border-bottom:2px solid #6B3FA0;padding-bottom:6px;">🗓️ Inscriptions rencontres ({{ inscrits|length }})</h2>
+<table style="width:100%;border-collapse:collapse;">
+    <tr style="background:#f0e6ff;"><th style="padding:8px;text-align:left;">Nom</th><th style="padding:8px;text-align:left;">Email</th><th style="padding:8px;text-align:left;">Rencontre</th><th style="padding:8px;text-align:left;">Statut</th></tr>
+    {% for i in inscrits %}
+    <tr style="border-bottom:1px solid #eee;">
+        <td style="padding:8px;">{{ i.nom }}</td>
+        <td style="padding:8px;"><a href="mailto:{{ i.email }}" style="color:#6B3FA0;">{{ i.email }}</a></td>
+        <td style="padding:8px;">{{ i.event.titre }}</td>
+        <td style="padding:8px;">{{ i.status }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endif %}
+
+<div style="margin-top:24px;padding:16px;background:#f5f5f5;border-radius:6px;font-size:0.85em;color:#666;">
+    <p style="margin:0;">Email automatique généré par LeBonCap — <a href="{{ request.host_url }}admin/" style="color:#6B3FA0;">Accéder au tableau de bord</a></p>
+</div>
+
+</body>
+</html>

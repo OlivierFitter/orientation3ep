@@ -27,3 +27,13 @@ class Config:
     SITE_NAME    = 'LeBonCap'
     SITE_URL     = os.environ.get('SITE_URL', 'http://localhost:5000')
     CONTACT_MAIL = 'olivierfitter@gmail.com'
+
+    # --- Admin cron webhook token ---
+    CRON_SECRET_TOKEN = os.environ.get('CRON_SECRET_TOKEN', '')
+
+    # --- Correctif URL PostgreSQL (Render retourne parfois "postgres://") ---
+    @classmethod
+    def fix_database_url(cls):
+        url = cls.SQLALCHEMY_DATABASE_URI
+        if url and url.startswith('postgres://'):
+            cls.SQLALCHEMY_DATABASE_URI = url.replace('postgres://', 'postgresql://', 1)

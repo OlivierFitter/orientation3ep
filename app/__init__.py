@@ -28,10 +28,15 @@ def create_app(config_class=Config):
     from app.routes.public  import bp as public_bp
     from app.routes.auth    import bp as auth_bp
     from app.routes.membres import bp as membres_bp
+    from app.routes.admin   import bp as admin_bp
 
     app.register_blueprint(public_bp)
     app.register_blueprint(auth_bp,    url_prefix='/auth')
     app.register_blueprint(membres_bp, url_prefix='/membres')
+    app.register_blueprint(admin_bp)
+
+    # Jinja globals utiles
+    app.jinja_env.globals.update(enumerate=enumerate)
 
     # Création des tables si nécessaire
     with app.app_context():

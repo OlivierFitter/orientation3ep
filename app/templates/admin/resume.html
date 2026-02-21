@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="section-light">
+<div class="container admin-container">
+
+    <div class="admin-header">
+        <h1>📊 Résumé quotidien</h1>
+        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline btn-sm">← Dashboard</a>
+    </div>
+
+    <!-- Sélecteur de période -->
+    <div class="admin-panel" style="margin-bottom:20px;">
+        <form method="GET" style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+            <label for="depuis"><strong>Depuis le :</strong></label>
+            <input type="date" name="depuis" id="depuis" value="{{ depuis }}"
+                   class="form-control-sm">
+            <button type="submit" class="btn btn-primary btn-sm">Actualiser</button>
+        </form>
+    </div>
+
+    <!-- Résumé -->
+    <div class="admin-stats-grid" style="margin-bottom:24px;">
+        <div class="stat-card {% if contacts|length > 0 %}stat-alert{% else %}stat-neutral{% endif %}">
+            <span class="stat-number">{{ contacts|length }}</span>
+            <span class="stat-label">Demandes<br>recontact</span>
+        </div>
+        <div class="stat-card {% if questions|length > 0 %}stat-alert{% else %}stat-neutral{% endif %}">
+            <span class="stat-number">{{ questions|length }}</span>
+            <span class="stat-label">Questions<br>courtes</span>
+        </div>
+        <div class="stat-card {% if parcoursup|length > 0 %}stat-alert{% else %}stat-neutral{% endif %}">
+            <span class="stat-number">{{ parcoursup|length }}</span>
+            <span class="stat-label">Questions<br>Parcoursup</span>
+        </div>
+        <div class="stat-card {% if inscrits|length > 0 %}stat-alert{% else %}stat-neutral{% endif %}">
+            <span class="stat-number">{{ inscrits|length }}</span>
+            <span class="stat-label">Inscriptions<br>rencontres</span>
+        </div>
+    </div>
+
+    <!-- Bouton d'envoi -->
+    {% set total = contacts|length + questions|length + parcoursup|length + inscrits|length %}
+    {% if total > 0 %}
+    <div class="admin-panel" style="margin-bottom:24px; background:#fff9e6; border:1px solid #f5c400;">
+        <p style="margin-bottom:12px;">
+            <strong>{{ total }} élément(s)</strong> à inclure dans le résumé.
+            Cliquez pour recevoir ce résumé par email.
+        </p>
+        <form method="POST" action="{{ url_for('admin.resume_envoyer') }}">
+            <input type="hidden" name="depuis" value="{{ depuis }}">
+            <button type="submit" class="btn btn-primary">
+                📧 Envoyer le résumé par email maintenant
+            </button>
+        </form>
+    </div>
+    {% else %}
+    <div class="admin-empty-block">
+        <p>Rien à signaler pour cette période. 🎉</p>
+    </div>
+    {% endif %}
+
+    <!-- Détail Recontacts -->
+    {% if contacts %}
+    <div class="admin-panel">
+        <h2 class="admin-panel-title">📬 Demandes de recontact ({{ contacts|length }})</h2>
+        <table class="admin-table admin-table-full">
+            <thead><tr><th>Nom</th><th>Email</th><th>Tél</th><th>Date</th></tr></thead>
+            <tbody>
+            {% for c in contacts %}
+            <tr>
+                <td>{{ c.nom }}</td>
+                <td><a href="mailto:{{ c.email }}">{{ c.email }}</a></td>
+                <td>{{ c.telephone or '—' }}</td>
+                <td>{{ c.created_at.strftime('%d/%m %H:%M') }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    <!-- Détail Questions -->
+    {% if questions %}
+    <div class="admin-panel" style="margin-top:16px;">
+        <h2 class="admin-panel-title">❓ Questions courtes ({{ questions|length }})</h2>
+        {% for q in questions %}
+        <div class="message-item">
+            <div class="message-header">
+                <strong>{{ q.nom }}</strong> — <a href="mailto:{{ q.email }}">{{ q.email }}</a>
+                <span class="td-date">{{ q.created_at.strftime('%d/%m %H:%M') }}</span>
+            </div>
+            <div class="message-body">{{ q.message }}</div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Détail Parcoursup -->
+    {% if parcoursup %}
+    <div class="admin-panel" style="margin-top:16px;">
+        <h2 class="admin-panel-title">🚨 Questions Parcoursup 2026 ({{ parcoursup|length }})</h2>
+        {% for p in parcoursup %}
+        <div class="message-item">
+            <div class="message-header">
+                <strong>{{ p.nom }}</strong> — <a href="mailto:{{ p.email }}">{{ p.email }}</a>
+                <span class="td-date">{{ p.created_at.strftime('%d/%m %H:%M') }}</span>
+            </div>
+            <div class="message-body">{{ p.message }}</div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Détail Inscriptions -->
+    {% if inscrits %}
+    <div class="admin-panel" style="margin-top:16px;">
+        <h2 class="admin-panel-title">🗓️ Inscriptions rencontres ({{ inscrits|length }})</h2>
+        <table class="admin-table admin-table-full">
+            <thead><tr><th>Nom</th><th>Email</th><th>Rencontre</th><th>Statut</th><th>Date</th></tr></thead>
+            <tbody>
+            {% for i in inscrits %}
+            <tr>
+                <td>{{ i.nom }}</td>
+                <td><a href="mailto:{{ i.email }}">{{ i.email }}</a></td>
+                <td>{{ i.event.titre }}</td>
+                <td><span class="{% if i.status == 'confirmed' %}badge-ok{% elif i.status == 'waitlist' %}badge-warning{% else %}badge-danger{% endif %}">
+                    {{ i.status }}
+                </span></td>
+                <td>{{ i.created_at.strftime('%d/%m %H:%M') }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    <!-- Info cron automatique -->
+    <div class="admin-panel" style="margin-top:24px; background:#f0f8ff; border:1px solid #bee5eb;">
+        <h3 style="color:#0c5460; font-size:1rem; margin-bottom:8px;">⚙️ Résumé automatique</h3>
+        <p style="font-size:0.9rem; color:#555; margin-bottom:8px;">
+            Pour recevoir ce résumé automatiquement chaque matin, configurez un cron externe :
+        </p>
+        <ul style="font-size:0.85rem; color:#555; margin-left:20px;">
+            <li>Service gratuit : <strong>cron-job.org</strong></li>
+            <li>URL : <code>{{ request.host_url }}admin/api/trigger-resume</code> (POST)</li>
+            <li>Header : <code>X-Cron-Token: [votre CRON_SECRET_TOKEN]</code></li>
+            <li>Horaire : <code>0 7 * * *</code> (7h chaque matin)</li>
+        </ul>
+    </div>
+
+</div>
+</section>
+{% endblock %}

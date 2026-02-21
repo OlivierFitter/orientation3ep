@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="section-light">
+<div class="container admin-container">
+
+    <div class="admin-header">
+        <h1>🗓️ Gestion des rencontres</h1>
+        <div style="display:flex; gap:10px;">
+            <a href="{{ url_for('admin.rencontre_new') }}" class="btn btn-primary">➕ Nouvelle rencontre</a>
+            <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline btn-sm">← Dashboard</a>
+        </div>
+    </div>
+
+    {% if events %}
+    <table class="admin-table admin-table-full">
+        <thead>
+            <tr>
+                <th>Titre / Thématique</th>
+                <th>Date</th>
+                <th>Mode</th>
+                <th>Places</th>
+                <th>Statut</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for e in events %}
+        <tr class="{% if e.est_passe %}row-past{% endif %}">
+            <td>
+                <strong>{{ e.titre }}</strong>
+                <br><small class="text-muted">{{ e.thematique }}</small>
+                {% if e.precisions %}<br><small class="text-muted">{{ e.precisions[:60] }}{% if e.precisions|length > 60 %}…{% endif %}</small>{% endif %}
+            </td>
+            <td class="td-date">
+                {{ e.date_event.strftime('%d/%m/%Y') }}<br>
+                <small>{{ e.date_event.strftime('%Hh%M') }}</small>
+            </td>
+            <td>{{ '🖥️ Visio' if e.mode == 'visio' else '📍 Présentiel' }}
+                {% if e.lieu %}<br><small class="text-muted">{{ e.lieu[:30] }}</small>{% endif %}
+            </td>
+            <td>
+                <span class="{% if e.est_complet %}badge-danger{% else %}badge-ok{% endif %}">
+                    {{ e.places_confirmees }}/{{ e.places_max }}
+                </span>
+                {% if e.public_registrations.filter_by(status='waitlist').count() > 0 %}
+                <br><small class="text-muted">+{{ e.public_registrations.filter_by(status='waitlist').count() }} attente</small>
+                {% endif %}
+            </td>
+            <td>
+                {% if e.est_passe %}
+                <span class="badge-past">Passé</span>
+                {% elif e.is_published %}
+                <span class="badge-published">Publié</span>
+                {% else %}
+                <span class="badge-draft">Brouillon</span>
+                {% endif %}
+            </td>
+            <td class="td-actions">
+                <a href="{{ url_for('admin.rencontre_inscrits', id=e.id) }}" class="btn btn-sm btn-outline">👥 Inscrits</a>
+                <a href="{{ url_for('admin.rencontre_edit', id=e.id) }}" class="btn btn-sm btn-outline">✏️ Modifier</a>
+                <form method="POST" action="{{ url_for('admin.rencontre_toggle_publish', id=e.id) }}" style="display:inline;">
+                    <button class="btn btn-sm {% if e.is_published %}btn-outline{% else %}btn-primary{% endif %}">
+                        {{ '🔒 Dépublier' if e.is_published else '🚀 Publier' }}
+                    </button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="admin-empty-block">
+        <p>Aucune rencontre créée. <a href="{{ url_for('admin.rencontre_new') }}">Créer la première →</a></p>
+    </div>
+    {% endif %}
+
+</div>
+</section>
+{% endblock %}

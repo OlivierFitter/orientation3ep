@@ -26,6 +26,9 @@
             <li><a href="{{ url_for('public.contact') }}">Contact</a></li>
             {% if current_user.is_authenticated %}
                 <li><a href="{{ url_for('membres.essentiel') }}" class="nav-membres">📚 Mes conseils</a></li>
+                {% if current_user.is_admin %}
+                <li><a href="{{ url_for('admin.dashboard') }}" class="btn-nav btn-admin-nav">🛡️ ADMIN</a></li>
+                {% endif %}
                 <li><a href="{{ url_for('auth.logout') }}" class="btn-nav">Déconnexion</a></li>
             {% else %}
                 <li><a href="{{ url_for('auth.login') }}" class="btn-nav">Connexion</a></li>

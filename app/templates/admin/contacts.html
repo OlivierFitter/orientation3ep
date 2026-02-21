@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="section-light">
+<div class="container admin-container">
+
+    <div class="admin-header">
+        <h1>📬 Demandes de recontact</h1>
+        <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline btn-sm">← Dashboard</a>
+    </div>
+
+    <!-- Filtres -->
+    <div class="admin-filters">
+        <a href="{{ url_for('admin.contacts', filtre='non_lus') }}"
+           class="btn btn-sm {% if filtre == 'non_lus' %}btn-primary{% else %}btn-outline{% endif %}">
+            Non lus
+        </a>
+        <a href="{{ url_for('admin.contacts', filtre='lus') }}"
+           class="btn btn-sm {% if filtre == 'lus' %}btn-primary{% else %}btn-outline{% endif %}">
+            Lus
+        </a>
+        <a href="{{ url_for('admin.contacts', filtre='tous') }}"
+           class="btn btn-sm {% if filtre == 'tous' %}btn-primary{% else %}btn-outline{% endif %}">
+            Tous
+        </a>
+        {% if filtre == 'non_lus' and items.total > 0 %}
+        <form method="POST" action="{{ url_for('admin.contacts_tout_lire') }}" style="margin-left:auto;">
+            <button class="btn btn-sm btn-outline">✓ Tout marquer comme lu</button>
+        </form>
+        {% endif %}
+    </div>
+
+    {% if items.items %}
+    <table class="admin-table admin-table-full">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Nom</th>
+                <th>Email</th>
+                <th>Téléphone</th>
+                <th>Date</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for c in items.items %}
+        <tr class="{% if not c.is_read %}row-unread{% endif %}">
+            <td class="td-id">{{ c.id }}</td>
+            <td><strong>{{ c.nom }}</strong></td>
+            <td><a href="mailto:{{ c.email }}">{{ c.email }}</a></td>
+            <td>{{ c.telephone or '—' }}</td>
+            <td class="td-date">{{ c.created_at.strftime('%d/%m/%Y %H:%M') }}</td>
+            <td>
+                {% if not c.is_read %}
+                <form method="POST" action="{{ url_for('admin.contact_lire', id=c.id) }}">
+                    <button class="btn btn-sm btn-outline">✓ Marquer lu</button>
+                </form>
+                {% else %}
+                <span class="text-muted">✅ Lu</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Pagination -->
+    {% if items.pages > 1 %}
+    <div class="pagination">
+        {% if items.has_prev %}
+        <a href="{{ url_for('admin.contacts', page=items.prev_num, filtre=filtre) }}" class="btn btn-sm btn-outline">← Précédent</a>
+        {% endif %}
+        <span class="page-info">Page {{ items.page }} / {{ items.pages }} ({{ items.total }} entrées)</span>
+        {% if items.has_next %}
+        <a href="{{ url_for('admin.contacts', page=items.next_num, filtre=filtre) }}" class="btn btn-sm btn-outline">Suivant →</a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div class="admin-empty-block">
+        <p>Aucune demande de recontact {% if filtre == 'non_lus' %}non lue{% elif filtre == 'lus' %}lue{% endif %}.</p>
+    </div>
+    {% endif %}
+
+</div>
+</section>
+{% endblock %}

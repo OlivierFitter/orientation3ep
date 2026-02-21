@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="section-light">
+    <div class="container form-container">
+
+        <h1 class="form-title">📬 Je souhaite être recontacté.e</h1>
+        <p class="form-sub">
+            Laissez-moi vos coordonnées et je vous recontacte dans les plus brefs délais
+            pour discuter de l'orientation de votre enfant.
+        </p>
+
+        <form method="POST" class="form-card">
+
+            <div class="form-group">
+                <label for="nom">Nom *</label>
+                <input type="text" id="nom" name="nom" required placeholder="Votre nom">
+            </div>
+
+            <div class="form-group">
+                <label for="email">Adresse e-mail *</label>
+                <input type="email" id="email" name="email" required placeholder="votre@email.com">
+            </div>
+
+            <div class="form-group">
+                <label for="telephone">Téléphone <span style="font-weight:400;font-size:0.85rem;">(optionnel)</span></label>
+                <input type="tel" id="telephone" name="telephone" placeholder="06 xx xx xx xx">
+            </div>
+
+            <div class="form-group form-check">
+                <input type="checkbox" id="rgpd_consent" name="rgpd_consent" required>
+                <label for="rgpd_consent">
+                    J'accepte que mes coordonnées soient utilisées pour me recontacter,
+                    conformément à la
+                    <a href="{{ url_for('public.politique_confidentialite') }}" target="_blank">politique de confidentialité</a>. *
+                </label>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-full btn-lg">
+                📬 Je souhaite être recontacté.e
+            </button>
+            <p class="form-note">Réponse sous 24-48h. Vos données ne sont jamais partagées.</p>
+
+        </form>
+
+        <div class="contact-whatsapp">
+            <h3>💬 Préférez-vous WhatsApp ?</h3>
+            <p>Envoyez-moi un message directement.</p>
+            <a href="https://wa.me/262XXXXXXXX" class="btn btn-green" target="_blank" rel="noopener">
+                💬 Écrire sur WhatsApp
+            </a>
+        </div>
+
+    </div>
+</section>
+{% endblock %}
