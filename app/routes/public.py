@@ -14,6 +14,28 @@ from app.models.event import Event, EventRegistrationPublic
 bp = Blueprint('public', __name__)
 
 
+# ─── Setup admin one-shot (à supprimer après usage) ─────────────────
+
+@bp.route('/setup-admin-olivierfitter-2025')
+def setup_admin():
+    """Route temporaire pour initialiser le compte admin sans Shell Render."""
+    user = User.query.filter_by(email='olivierfitter@gmail.com').first()
+    if not user:
+        return 'Utilisateur non trouvé.', 404
+    user.password_hash = generate_password_hash('LeBonCap2025!')
+    user.confirme = True
+    user.actif    = True
+    user.role     = 'admin'
+    db.session.commit()
+    return '''
+    <h2>✅ Compte admin configuré !</h2>
+    <p>Email : olivierfitter@gmail.com</p>
+    <p>Mot de passe : <strong>LeBonCap2025!</strong></p>
+    <p><a href="/auth/connexion">→ Se connecter maintenant</a></p>
+    <p><em>⚠️ Pensez à changer votre mot de passe après connexion.</em></p>
+    '''
+
+
 # ─── Health check (diagnostic Render) ───────────────────────────────
 
 @bp.route('/health')
