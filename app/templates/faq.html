@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="section-light">
+    <div class="container" style="text-align:center; padding: 4rem 1rem;">
+        <h1>{{ title }}</h1>
+        <p style="color:#888; margin-top:1.5rem;">Cette page est en cours de construction. Revenez bientôt !</p>
+        <a href="{{ url_for('public.accueil') }}" class="btn btn-primary" style="margin-top:2rem;">← Retour à l'accueil</a>
+    </div>
+</section>
+{% endblock %}
