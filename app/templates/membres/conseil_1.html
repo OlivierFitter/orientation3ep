@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="section-light">
+    <div class="container conseil-page">
+        <nav class="breadcrumb">
+            <a href="{{ url_for('membres.tableau_bord') }}">🏠 Mon espace</a> »
+            <a href="{{ url_for('membres.essentiel') }}">L'essentiel</a> »
+            Conseil n°1
+        </nav>
+
+        <div class="conseil-header">
+            <span class="conseil-num-lg">-1-</span>
+            <h1>Vous serez souvent très peu interpellé.e par le collège ou le lycée :<br>
+            c'est à vous d'agir ! 💥</h1>
+        </div>
+
+        <div class="conseil-body">
+            <p>
+                🚑 C'est quelque chose qu'on constate très souvent en cours d'année :
+                les <strong>parents sont très peu sollicités</strong> pour l'orientation de leurs enfants.
+            </p>
+            <p>
+                ❓ C'en est même étonnant, puisque ce sont des décisions qui vous reviennent (ce sont les textes).
+            </p>
+            <p>
+                ✈️ Vous signerez les fiches de dialogue ou fiche « navette » trois fois dans l'année,
+                mais c'est souvent pour vous faire avaliser des vœux pour lesquels vous n'aurez pas eu
+                de discussion, ni avec le prof principal, ni avec le ou la conseillère d'orientation.
+            </p>
+            <div class="highlight-box">
+                <strong>‼️ Vous ne bénéficierez quasiment jamais d'entretien au cours desquels
+                on va discuter de l'orientation de votre enfant en fonction de ses résultats
+                et de ses vœux. Et si ça arrive c'est ponctuel ‼️</strong>
+            </div>
+            <p>
+                ⚠️ Vous ne discuterez qu'avec votre enfant, et si vous n'êtes pas spécialiste,
+                si vous n'avez pas le temps de vous y intéresser, ce seul dialogue risque d'être
+                très limité, vu la COMPLEXITÉ parfois et les ENJEUX. ⚠️
+            </p>
+            <p>
+                💡 Ayez toujours en tête qu'un conseiller d'orientation dans l'éducation nationale
+                gère des centaines de dossiers et souvent des urgences. Le prof principal gère
+                entre 25 à 35 élèves et, pareil, il est accaparé davantage par les situations
+                très complexes ou bloquées.
+            </p>
+            <div class="highlight-box purple">
+                🔔 <strong>Prenez conscience que l'orientation est VOTRE affaire.</strong>
+            </div>
+        </div>
+
+        <div class="conseil-nav">
+            <a href="{{ url_for('membres.essentiel') }}" class="btn btn-outline">← Retour à la liste</a>
+            <a href="{{ url_for('membres.conseil', num=2) }}" class="btn btn-primary">Conseil n°2 →</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

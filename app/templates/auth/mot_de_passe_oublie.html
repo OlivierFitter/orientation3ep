@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="section-light">
+    <div class="container form-container">
+        <h1 class="form-title">Mot de passe oublié 🔑</h1>
+        <p class="form-sub">Entrez votre email pour recevoir un lien de réinitialisation.</p>
+
+        <form method="POST" class="form-card">
+            <div class="form-group">
+                <label for="email">Adresse e-mail</label>
+                <input type="email" id="email" name="email" required
+                       placeholder="votre@email.com">
+            </div>
+            <button type="submit" class="btn btn-primary btn-full">
+                Envoyer le lien de réinitialisation
+            </button>
+        </form>
+
+        <p class="form-footer">
+            <a href="{{ url_for('auth.login') }}">← Retour à la connexion</a>
+        </p>
+    </div>
+</section>
+{% endblock %}

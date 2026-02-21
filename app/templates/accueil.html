@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- ═══ HERO ═══════════════════════════════════════════════════════ -->
+<section class="hero">
+    <div class="container">
+        <h1>L'orientation de votre enfant,<br><span class="accent">c'est votre affaire.</span></h1>
+        <p class="hero-sub">
+            De la 3e à Parcoursup, le taux d'échec en 1re année postbac toutes filières confondues
+            est encore proche de <strong>40 %</strong>.<br>
+            Pourtant, les parents sont les <strong>seuls décisionnaires</strong> de l'orientation.
+        </p>
+        <div class="hero-cta">
+            <a href="{{ url_for('auth.inscription') }}" class="btn btn-primary btn-lg">
+                Accéder aux conseils gratuits 🎁
+            </a>
+            <a href="{{ url_for('public.prestations') }}" class="btn btn-outline btn-lg">
+                Découvrir les prestations
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ COMMENT ORIENTER ════════════════════════════════════════════ -->
+<section class="section-light">
+    <div class="container">
+        <h2 class="section-title">Comment orienter ?</h2>
+        <p class="section-sub">Tous les ans entre la 3e et Parcoursup :</p>
+        <div class="checklist">
+            <div class="check-item">✅ Comprendre et bâtir ses <strong>stratégies</strong></div>
+            <div class="check-item">✅ Saisir les <strong>enjeux</strong> de chaque niveau</div>
+            <div class="check-item">✅ Se poser les <strong>bonnes questions</strong></div>
+            <div class="check-item">✅ Comprendre les <strong>pièges</strong> à éviter</div>
+            <div class="check-item">✅ Découvrir une <strong>méthode</strong> pour hiérarchiser les vœux Parcoursup</div>
+            <div class="check-item">✅ Comprendre que <strong>orientation et travail scolaire</strong> sont indissociables ‼️</div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ LES OUTILS ══════════════════════════════════════════════════ -->
+<section class="section-purple">
+    <div class="container">
+        <h2 class="section-title white">Les outils 🔧</h2>
+        <div class="cards-grid">
+
+            <div class="card">
+                <h3>🎁 L'essentiel pour bien démarrer</h3>
+                <p>7 à 8 conseils généraux issus de mon expérience. Une façon de bien démarrer
+                pour tous les niveaux, de la 3e à Parcoursup.</p>
+                <p><em>Pour ne pas se faire surprendre et planifier la réflexion sur l'orientation.</em></p>
+                {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('membres.essentiel') }}" class="btn btn-white">Accéder →</a>
+                {% else %}
+                    <a href="{{ url_for('auth.inscription') }}" class="btn btn-white">
+                        Inscription gratuite pour accéder 🔒
+                    </a>
+                {% endif %}
+            </div>
+
+            <div class="card">
+                <h3>💬 L'accompagnement des parents</h3>
+                <p>Posez vos questions ! Une réponse <strong>rapide, argumentée</strong> d'un expert.</p>
+                <p>Question courte (QC) — Accompagnement ponctuel (AP) — Sur l'année (AA)</p>
+                <a href="{{ url_for('public.prestations') }}" class="btn btn-white">Voir les prestations →</a>
+            </div>
+
+            <div class="card">
+                <h3>🖥️ Les rencontres avec les parents</h3>
+                <p>Conférences en <strong>visio</strong> ou en <strong>présence</strong>
+                (sud de l'île de La Réunion). Pour échanger, s'informer, poser ses questions.</p>
+                <a href="{{ url_for('public.rencontres') }}" class="btn btn-white">En savoir plus →</a>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- ═══ TÉMOIGNAGES ═════════════════════════════════════════════════ -->
+<section class="section-light">
+    <div class="container">
+        <h2 class="section-title">Ce qu'ils en disent</h2>
+        <div class="temoignages">
+            <blockquote>
+                « Avec le travail d'Olivier Fitter c'est devenu clair et notre fille s'est orientée
+                en général mais nous savons pourquoi et avec les bonnes spécialités. »
+                <cite>— Marc Odatti, 2024</cite>
+            </blockquote>
+            <blockquote>
+                « Merci à Olivier pour son franc-parler. On se faisait un monde de Parcoursup,
+                et on avait raison ! Il nous a éclairé sur certains aspects mais personne ne nous
+                avait expliqué les choses comme cela. Un conseil : prenez-y vous tôt. »
+                <cite>— Chantale M., 2023</cite>
+            </blockquote>
+        </div>
+    </div>
+</section>
+
+<!-- ═══ CTA FINAL ═══════════════════════════════════════════════════ -->
+<section class="section-purple">
+    <div class="container text-center">
+        <h2 class="white">Prêt à prendre le bon cap ? 🎯</h2>
+        <p class="white">Inscription gratuite — Accès immédiat aux conseils essentiels</p>
+        <a href="{{ url_for('auth.inscription') }}" class="btn btn-white btn-lg">
+            Je m'inscris gratuitement
+        </a>
+    </div>
+</section>
+
+{% endblock %}

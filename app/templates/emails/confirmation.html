@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head><meta charset="UTF-8"></head>
+<body style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px;">
+    <div style="background: #6B3FA0; padding: 20px; border-radius: 8px 8px 0 0; text-align: center;">
+        <h1 style="color: white; margin: 0;">🎯 LeBonCap</h1>
+    </div>
+    <div style="background: #f9f9f9; padding: 30px; border-radius: 0 0 8px 8px;">
+        <h2>Bonjour {{ nom }} 👋</h2>
+        <p>Merci pour votre inscription sur <strong>LeBonCap</strong> !</p>
+        <p>Pour activer votre compte et accéder aux conseils essentiels sur l'orientation,
+        veuillez confirmer votre adresse email en cliquant sur le bouton ci-dessous :</p>
+
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="{{ confirm_url }}"
+               style="background: #6B3FA0; color: white; padding: 14px 28px;
+                      border-radius: 6px; text-decoration: none; font-weight: bold;">
+                ✅ Confirmer mon email
+            </a>
+        </div>
+
+        <p style="color: #888; font-size: 12px;">
+            Ou copiez ce lien dans votre navigateur :<br>
+            <a href="{{ confirm_url }}">{{ confirm_url }}</a>
+        </p>
+        <p style="color: #888; font-size: 12px;">
+            Ce lien est valable 24 heures.<br>
+            Si vous n'avez pas créé de compte, ignorez cet email.
+        </p>
+        <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;">
+        <p style="color: #555; font-size: 13px;">
+            Olivier Fitter — Spécialiste orientation 3e → Parcoursup<br>
+            <a href="https://www.leboncap.net">www.leboncap.net</a>
+        </p>
+    </div>
+</body>
+</html>

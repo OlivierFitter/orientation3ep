@@ -1,0 +1,24 @@
+# Secrets
+.env
+*.db
+instance/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Migrations (optionnel — à retirer si vous voulez versionner les migrations)
+# migrations/

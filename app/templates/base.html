@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if title %}{{ title }} — LeBonCap{% else %}LeBonCap{% endif %}</title>
+    <meta name="description" content="Olivier Fitter, spécialiste de l'orientation scolaire de la 3e à Parcoursup. Accompagnement des parents à La Réunion et en visio.">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- ═══ NAVBAR ═══════════════════════════════════════════════════ -->
+<nav class="navbar">
+    <div class="container nav-inner">
+        <a href="{{ url_for('public.accueil') }}" class="brand">
+            🎯 LeBonCap
+        </a>
+        <button class="nav-toggle" id="navToggle" aria-label="Menu">☰</button>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="{{ url_for('public.accueil') }}">Accueil</a></li>
+            <li><a href="{{ url_for('public.prestations') }}">Prestations</a></li>
+            <li><a href="{{ url_for('public.rencontres') }}">Rencontres</a></li>
+            <li><a href="{{ url_for('public.blog') }}">Blog</a></li>
+            <li><a href="{{ url_for('public.contact') }}">Contact</a></li>
+            {% if current_user.is_authenticated %}
+                <li><a href="{{ url_for('membres.essentiel') }}" class="nav-membres">📚 Mes conseils</a></li>
+                <li><a href="{{ url_for('auth.logout') }}" class="btn-nav">Déconnexion</a></li>
+            {% else %}
+                <li><a href="{{ url_for('auth.login') }}" class="btn-nav">Connexion</a></li>
+                <li><a href="{{ url_for('auth.inscription') }}" class="btn-nav btn-primary">S'inscrire</a></li>
+            {% endif %}
+        </ul>
+    </div>
+</nav>
+
+<!-- ═══ FLASH MESSAGES ══════════════════════════════════════════ -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="flash-container container">
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+{% endwith %}
+
+<!-- ═══ CONTENU PRINCIPAL ════════════════════════════════════════ -->
+<main>
+    {% block content %}{% endblock %}
+</main>
+
+<!-- ═══ FOOTER ══════════════════════════════════════════════════ -->
+<footer class="footer">
+    <div class="container footer-inner">
+        <div class="footer-brand">
+            <strong>🎯 LeBonCap</strong><br>
+            <small>Orientation scolaire — 3e à Parcoursup</small><br>
+            <small>Olivier Fitter — La Réunion</small>
+        </div>
+        <div class="footer-links">
+            <a href="{{ url_for('public.mentions_legales') }}">Mentions légales</a>
+            <a href="{{ url_for('public.politique_confidentialite') }}">Confidentialité</a>
+            <a href="{{ url_for('public.contact') }}">Contact</a>
+        </div>
+        <div class="footer-social">
+            <a href="https://www.facebook.com/orientation3eparcoursup" target="_blank" rel="noopener">📘 Facebook</a>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <small>© 2025 LeBonCap — Olivier Fitter | <a href="{{ url_for('public.politique_confidentialite') }}">RGPD</a></small>
+    </div>
+</footer>
+
+<!-- ═══ BANDEAU COOKIES (RGPD) ══════════════════════════════════ -->
+<div id="cookieBanner" class="cookie-banner" style="display:none;">
+    <div class="cookie-content">
+        <p>🍪 Ce site utilise des cookies fonctionnels uniquement, nécessaires à votre connexion. Aucun cookie publicitaire.
+        <a href="{{ url_for('public.politique_confidentialite') }}">En savoir plus</a></p>
+        <button onclick="acceptCookies()" class="btn btn-primary btn-sm">J'accepte</button>
+        <button onclick="refuseCookies()" class="btn btn-outline btn-sm">Refuser</button>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

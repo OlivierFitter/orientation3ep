@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="section-light">
+    <div class="container form-container">
+        <h1>Mon compte ⚙️</h1>
+
+        <div class="form-card">
+            <h2>Mes informations</h2>
+            <p><strong>Nom :</strong> {{ current_user.nom }}</p>
+            <p><strong>Email :</strong> {{ current_user.email }}</p>
+            <p><strong>Compte confirmé :</strong>
+                {% if current_user.confirme %}✅ Oui{% else %}⏳ En attente{% endif %}
+            </p>
+            <p><strong>Membre depuis :</strong> {{ current_user.created_at.strftime('%d/%m/%Y') }}</p>
+        </div>
+
+        <div class="form-card danger-zone">
+            <h2>⚠️ Zone de danger</h2>
+            <p>La suppression de votre compte est <strong>définitive</strong> et supprime
+            toutes vos données (RGPD — droit à l'oubli).</p>
+            <form method="POST" action="{{ url_for('auth.supprimer_compte') }}"
+                  onsubmit="return confirm('Êtes-vous sûr ? Cette action est irréversible.')">
+                <button type="submit" class="btn btn-danger">
+                    Supprimer définitivement mon compte
+                </button>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="section-light">
+    <div class="container">
+        <h1>Bonjour {{ current_user.nom }} 👋</h1>
+        <p>Bienvenue dans votre espace membre. Accédez aux conseils essentiels pour l'orientation de votre enfant.</p>
+
+        <div class="cards-grid">
+            {% for i in range(1, 9) %}
+            <a href="{{ url_for('membres.conseil', num=i) }}" class="card card-conseil">
+                <div class="conseil-num">{{ i }}</div>
+                <div class="conseil-info">
+                    <h3>Conseil n°{{ i }}</h3>
+                    <p>
+                        {% if i == 1 %}Vous êtes le décisionnaire : agissez !
+                        {% elif i == 2 %}Anticiper dès la 2nde
+                        {% elif i == 3 %}Chaque année, de nouvelles questions
+                        {% elif i == 4 %}4 RDV minimum essentiels par an
+                        {% elif i == 5 %}Pensez employabilité (2, 3, 5 ans)
+                        {% elif i == 6 %}Filière à forte valeur plutôt que métier
+                        {% elif i == 7 %}Les sources d'info (Onisep, etc.)
+                        {% elif i == 8 %}Conseil bonus 🎁
+                        {% endif %}
+                    </p>
+                </div>
+                <span class="arrow">→</span>
+            </a>
+            {% endfor %}
+        </div>
+
+        <div class="mon-compte-link">
+            <a href="{{ url_for('membres.mon_compte') }}" class="btn btn-outline">⚙️ Mon compte</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

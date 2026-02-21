@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="section-light">
+    <div class="container conseil-page">
+        <nav class="breadcrumb">
+            <a href="{{ url_for('membres.tableau_bord') }}">🏠 Mon espace</a> »
+            <a href="{{ url_for('membres.essentiel') }}">L'essentiel</a> »
+            Conseil n°2
+        </nav>
+
+        <div class="conseil-header">
+            <span class="conseil-num-lg">-2-</span>
+            <h1>
+            {% if 2 == 2 %}Anticiper les vœux Parcoursup dès la classe de seconde
+            {% elif 2 == 3 %}Processus d'orientation : chaque année de nouvelles questions
+            {% elif 2 == 4 %}Stratégies d'orientation : 4 RDV minimum essentiels chaque année
+            {% elif 2 == 5 %}Filières postbac : pensez employabilité en 2, 3, 5 ou 8 ans
+            {% elif 2 == 6 %}Orientation : pensez filière à forte valeur plutôt que métier !
+            {% elif 2 == 7 %}Que penser des sources, comme l'Onisep, l'étudiant, Avenir 21 etc. ?
+            {% elif 2 == 8 %}Conseil bonus 🎁
+            {% endif %}
+            </h1>
+        </div>
+
+        <div class="conseil-body">
+            <p><em>Contenu à rédiger — ce conseil sera enrichi prochainement.</em></p>
+            <p>Retrouvez l'intégralité de ce conseil dans votre espace membre.</p>
+        </div>
+
+        <div class="conseil-nav">
+            {% if 2 > 1 %}
+            <a href="{{ url_for('membres.conseil', num=2-1) }}" class="btn btn-outline">← Conseil n°1</a>
+            {% else %}
+            <a href="{{ url_for('membres.essentiel') }}" class="btn btn-outline">← Retour</a>
+            {% endif %}
+            {% if 2 < 8 %}
+            <a href="{{ url_for('membres.conseil', num=2+1) }}" class="btn btn-primary">Conseil n°3 →</a>
+            {% else %}
+            <a href="{{ url_for('membres.tableau_bord') }}" class="btn btn-primary">🏠 Mon espace</a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}
