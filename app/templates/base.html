@@ -14,27 +14,36 @@
 <!-- ═══ NAVBAR ═══════════════════════════════════════════════════ -->
 <nav class="navbar">
     <div class="container nav-inner">
+
+        <!-- Logo -->
         <a href="{{ url_for('public.accueil') }}" class="brand">
             🎯 LeBonCap
         </a>
+
+        <!-- Burger mobile -->
         <button class="nav-toggle" id="navToggle" aria-label="Menu">☰</button>
-        <ul class="nav-links" id="navLinks">
+
+        <!-- Liens gauche -->
+        <ul class="nav-links nav-links-left" id="navLinksLeft">
             <li><a href="{{ url_for('public.accueil') }}">Accueil</a></li>
-            <li><a href="{{ url_for('public.prestations') }}">Prestations</a></li>
-            <li><a href="{{ url_for('public.rencontres') }}">Rencontres</a></li>
+            <li><a href="{{ url_for('public.accueil') }}#aides">Les outils</a></li>
             <li><a href="{{ url_for('public.blog') }}">Blog</a></li>
-            <li><a href="{{ url_for('public.contact') }}">Contact</a></li>
+        </ul>
+
+        <!-- Auth droite -->
+        <ul class="nav-links nav-links-right" id="navLinksRight">
             {% if current_user.is_authenticated %}
-                <li><a href="{{ url_for('membres.essentiel') }}" class="nav-membres">📚 Mes conseils</a></li>
                 {% if current_user.is_admin %}
                 <li><a href="{{ url_for('admin.dashboard') }}" class="btn-nav btn-admin-nav">🛡️ ADMIN</a></li>
                 {% endif %}
+                <li><a href="{{ url_for('membres.mon_compte') }}" class="btn-nav">Mon compte</a></li>
                 <li><a href="{{ url_for('auth.logout') }}" class="btn-nav">Déconnexion</a></li>
             {% else %}
                 <li><a href="{{ url_for('auth.login') }}" class="btn-nav">Connexion</a></li>
-                <li><a href="{{ url_for('auth.inscription') }}" class="btn-nav btn-primary">S'inscrire</a></li>
+                <li><a href="{{ url_for('auth.inscription') }}" class="btn-nav btn-primary">Créer un compte</a></li>
             {% endif %}
         </ul>
+
     </div>
 </nav>
 
@@ -63,24 +72,24 @@
             <small>Olivier Fitter — La Réunion</small>
         </div>
         <div class="footer-links">
+            <a href="{{ url_for('public.contact_general') }}">Contact</a>
+            <a href="{{ url_for('public.blog') }}">Blog</a>
             <a href="{{ url_for('public.mentions_legales') }}">Mentions légales</a>
-            <a href="{{ url_for('public.politique_confidentialite') }}">Confidentialité</a>
-            <a href="{{ url_for('public.contact') }}">Contact</a>
+            <a href="{{ url_for('public.politique_confidentialite') }}">Politique de confidentialité</a>
         </div>
         <div class="footer-social">
-            <a href="https://www.facebook.com/orientation3eparcoursup" target="_blank" rel="noopener">📘 Facebook</a>
+            <a href="https://www.facebook.com/share/1CF4U8Jobe/?mibextid=wwXIfr" target="_blank" rel="noopener">📘 Facebook</a>
         </div>
     </div>
     <div class="footer-bottom">
-        <small>© 2025 LeBonCap — Olivier Fitter | <a href="{{ url_for('public.politique_confidentialite') }}">RGPD</a></small>
+        <small>© 2026 LeBonCap — Olivier Fitter</small>
     </div>
 </footer>
 
 <!-- ═══ BANDEAU COOKIES (RGPD) ══════════════════════════════════ -->
 <div id="cookieBanner" class="cookie-banner" style="display:none;">
     <div class="cookie-content">
-        <p>🍪 Ce site utilise des cookies fonctionnels uniquement, nécessaires à votre connexion. Aucun cookie publicitaire.
-        <a href="{{ url_for('public.politique_confidentialite') }}">En savoir plus</a></p>
+        <p>🍪 Ce site utilise des cookies fonctionnels uniquement, nécessaires à votre connexion. Aucun cookie publicitaire.</p>
         <button onclick="acceptCookies()" class="btn btn-primary btn-sm">J'accepte</button>
         <button onclick="refuseCookies()" class="btn btn-outline btn-sm">Refuser</button>
     </div>

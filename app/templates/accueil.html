@@ -4,17 +4,24 @@
 <!-- ═══ HERO ═══════════════════════════════════════════════════════ -->
 <section class="hero">
     <div class="container">
-        <h1>Ne subissez plus l'orientation<br><span class="accent">de votre enfant</span></h1>
-        <p class="hero-sub">
-            Bénéficiez des conseils d'un expert et d'accompagnements sur mesure
-            pour y voir <em>(enfin)</em> clair et monter les bonnes stratégies.<br>
-            <strong>De la 3e à Parcoursup.</strong>
+        <h1>Prenez la main sur l'orientation<br><span class="accent">de votre enfant</span></h1>
+
+        <p class="hero-sub" style="font-size:1.2rem; color:#fce4b8; letter-spacing:0.02em;">
+            🧭 Transformez le labyrinthe de l'orientation en une stratégie claire pour sa réussite.
+        </p>
+
+        <p class="hero-sub" style="font-size:1.35rem; font-weight:600; color:#ffffff;">
+            📋 Comprendre l'orientation, les questions et enjeux à chaque niveau, travailler ses stratégies.<br>
+            <strong>De la <span class="accent-3e">3e</span> à <span class="accent-parcoursup">Parcoursup</span>.</strong>
         </p>
         <div class="hero-cta">
-            <a href="#outils" class="btn btn-white btn-lg">
+            <a href="#aides" class="btn btn-white btn-lg">
                 Découvrir les accompagnements
             </a>
         </div>
+        <p style="margin-top:12px; font-size:0.95rem; color:#f0d9ff; opacity:0.9;">
+            ✨ Des ressources gratuites, concrètes et de grande valeur pour y voir clair.
+        </p>
     </div>
 </section>
 
@@ -22,9 +29,9 @@
 <a href="{{ url_for('public.parcoursup_2026') }}" class="bandeau-urgence" aria-label="Urgence Parcoursup 2026">
     <div class="bandeau-inner">
         <span class="bandeau-text">
-            🚨 URGENCE PARCOURSUP 2026 — Une question courte ? Besoin d'une réponse rapide ? &nbsp;&nbsp;&nbsp;
-            🚨 URGENCE PARCOURSUP 2026 — Une question courte ? Besoin d'une réponse rapide ? &nbsp;&nbsp;&nbsp;
-            🚨 URGENCE PARCOURSUP 2026 — Une question courte ? Besoin d'une réponse rapide ? &nbsp;&nbsp;&nbsp;
+            🚨 URGENCE PARCOURSUP 2026 — Une question courte ? Besoin d'une réponse rapide ? 👆 Cliquez sur ce bandeau &nbsp;&nbsp;&nbsp;
+            🚨 URGENCE PARCOURSUP 2026 — Une question courte ? Besoin d'une réponse rapide ? 👆 Cliquez sur ce bandeau &nbsp;&nbsp;&nbsp;
+            🚨 URGENCE PARCOURSUP 2026 — Une question courte ? Besoin d'une réponse rapide ? 👆 Cliquez sur ce bandeau &nbsp;&nbsp;&nbsp;
         </span>
     </div>
 </a>
@@ -46,41 +53,51 @@
 </section>
 
 <!-- ═══ LES OUTILS ══════════════════════════════════════════════════ -->
-<section id="outils" class="section-purple">
+<section id="aides" class="section-outils">
     <div class="container">
-        <h2 class="section-title white">Les outils 🔧</h2>
-        <div class="cards-grid">
+        <h2 class="outils-section-title">Les outils</h2>
+        <p class="outils-section-subtitle">Tout ce qu'il faut pour prendre les bonnes décisions</p>
+        <span class="outils-title-line"></span>
+
+        <!-- 3 cards en haut -->
+        <div class="cards-grid outils-grid">
 
             <!-- CARD 1 — Essentiel -->
-            <div class="card">
-                <h3>🎁 L'essentiel pour bien démarrer</h3>
-                <p>
-                    8 informations que tout parent devrait avoir en tête,
-                    de la 3e à Parcoursup. Pour ne pas se faire surprendre,
-                    comprendre les enjeux et poser les bonnes questions.
-                </p>
-                <p><strong>Gratuit.</strong></p>
-                <a href="{{ url_for('membres.essentiel') if current_user.is_authenticated else url_for('auth.inscription') }}"
-                   class="btn btn-white">
-                    Accéder gratuitement →
-                </a>
+            <div class="card-outil card-outil-gold">
+                <div class="card-outil-bar"></div>
+                <div class="card-outil-body">
+                    <div class="card-outil-icon">🎁</div>
+                    <h3>L'essentiel pour bien démarrer</h3>
+                    <p>
+                        <span style="font-size:1.15em; color:#f0c040; font-weight:700;">7 informations</span> que tout parent devrait avoir en tête,
+                        de la 3e à Parcoursup. Pour ne pas se faire surprendre,
+                        comprendre les enjeux et poser les bonnes questions.
+                    </p>
+                    <p><strong>Gratuit.</strong></p>
+                    <a href="{{ url_for('membres.essentiel') if current_user.is_authenticated else url_for('auth.inscription') }}"
+                       class="btn btn-white">
+                        Accéder gratuitement →
+                    </a>
+                </div>
             </div>
 
             <!-- CARD 2 — Accompagnement -->
-            <div class="card">
-                <h3>💬 L'accompagnement des parents</h3>
-                <p>
-                    <strong>Gratuit aussi :</strong> posez une question courte et précise,
-                    je vous réponds dans les plus brefs délais.
-                </p>
-                <a href="{{ url_for('public.contact') }}?code=QC" class="btn btn-white" style="margin-bottom:10px;">
-                    ❓ Poser une question
-                </a>
-                <p style="margin-top:14px;">
-                    Pour un accompagnement plus exhaustif ou retravailler en profondeur
-                    l'orientation de votre enfant, prenons contact.
-                </p>
-                <div style="text-align:center;">
+            <div class="card-outil card-outil-blue">
+                <div class="card-outil-bar"></div>
+                <div class="card-outil-body">
+                    <div class="card-outil-icon">💬</div>
+                    <h3>L'accompagnement des parents</h3>
+                    <p>
+                        <strong>Gratuit 🎁 :</strong> posez une <span style="font-size:1.15em; font-weight:700; color:#fff;">question courte et précise</span>,
+                        je vous réponds dans les plus brefs délais.
+                    </p>
+                    <a href="{{ url_for('public.contact') }}?code=QC" class="btn btn-white" style="margin-bottom:12px;">
+                        ❓ Poser une question
+                    </a>
+                    <p style="margin-top:14px;">
+                        Pour un <span style="font-size:1.15em; font-weight:700; color:#fff;">accompagnement plus exhaustif</span> ou retravailler en profondeur
+                        l'orientation de votre enfant, prenons contact.
+                    </p>
                     <a href="{{ url_for('public.recontact') }}" class="btn btn-white">
                         📬 Je souhaite être recontacté.e
                     </a>
@@ -88,19 +105,55 @@
             </div>
 
             <!-- CARD 3 — Rencontres -->
-            <div class="card">
-                <h3>🖥️ Les rencontres avec les parents</h3>
-                <p>
-                    Des visios ou rencontres physiques sont programmées
-                    tout au long de l'année pour échanger, s'informer
-                    et poser vos questions.
-                </p>
-                <a href="{{ url_for('public.rencontres') }}" class="btn btn-white">
-                    Voir le calendrier →
-                </a>
+            <div class="card-outil card-outil-green">
+                <div class="card-outil-bar"></div>
+                <div class="card-outil-body">
+                    <div class="card-outil-icon">🖥️</div>
+                    <h3>Les rencontres avec les parents</h3>
+                    <p>
+                        Des visios ou rencontres physiques, toute l'année
+                        pour éclaircir un sujet délicat et vous permettre
+                        d'<span style="font-size:1.15em; font-weight:700; color:#fff;">accompagner votre enfant</span>.
+                    </p>
+                    <a href="{{ url_for('public.rencontres') }}" class="btn btn-white">
+                        Voir le calendrier →
+                    </a>
+                </div>
             </div>
 
         </div>
+
+        <!-- CARD 4 — Blog — pleine largeur -->
+        <div class="card-outil card-outil-blog">
+            <div class="card-outil-bar"></div>
+            <div class="card-outil-body">
+                <div class="blog-card-top">
+                    <div class="blog-card-text">
+                        <h3>📚 Le Blog — pour creuser les thèmes qui comptent</h3>
+                        <p>
+                            Une série d'articles pour comprendre en profondeur les <span style="font-size:1.15em; font-weight:700; color:#fff;">grandes questions
+                            de l'orientation scolaire</span> : la voie technologique, la voie générale,
+                            la difficulté d'orienter en seconde, comment choisir ses spécialités,
+                            les pièges de Parcoursup…
+                        </p>
+                    </div>
+                    <div class="blog-card-cta">
+                        <a href="{{ url_for('public.blog') }}" class="btn btn-white">
+                            Lire les articles →
+                        </a>
+                    </div>
+                </div>
+                <div class="blog-card-tags">
+                    <span class="blog-tag">📖 Voie générale</span>
+                    <span class="blog-tag">🔧 Voie technologique</span>
+                    <span class="blog-tag">🎯 Orienter en 2de</span>
+                    <span class="blog-tag">📋 Choisir ses spécialités</span>
+                    <span class="blog-tag">🚨 Parcoursup</span>
+                    <span class="blog-tag">💡 Stratégies</span>
+                </div>
+            </div>
+        </div>
+
     </div>
 </section>
 
@@ -124,6 +177,80 @@
     </div>
 </section>
 
+
+<!-- ═══ FAQ ════════════════════════════════════════════════════════ -->
+<section class="section-light">
+    <div class="container">
+        <h2 class="section-title">Foire aux questions</h2>
+
+        <div class="faq-list">
+
+            <details class="faq-item">
+                <summary class="faq-question">Mon enfant n'a aucune piste, il ne s'y intéresse pas… les accompagnements proposés sont-ils utiles ?</summary>
+                <div class="faq-answer">
+                    <p><strong>Oui !</strong></p>
+                    <p>Un élève peut ne montrer aucun intérêt mais l'expérience montre qu'il n'est pas insensible au diagnostic posé et aux pistes (stratégies) proposées, envisagées.</p>
+                    <p>Il pourra, le temps venu, s'en emparer pour réfléchir sans avoir à refaire tout le chemin. Notez aussi que pendant qu'il n'échange pas il continue néanmoins à réfléchir, à se poser des questions (même sur son relatif "immobilisme").</p>
+                    <p>En outre, poser les choses en termes d'orientation et de travail, d'objectifs, est toujours salutaire pour un enfant qui est toujours en demande de cadre, de conseils et de bienveillance… quoique laisse paraître son humeur au quotidien !</p>
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary class="faq-question">À quelle fréquence sont organisées les réunions en visio ?</summary>
+                <div class="faq-answer">
+                    <p>Environ tous les mois.</p>
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary class="faq-question">Qu'est-ce qui manque le plus aux parents pour aider à l'orientation de leur enfant ?</summary>
+                <div class="faq-answer">
+                    <p>Je dirai avant tout <strong>la connaissance de l'organisation des études postbac</strong> et même au lycée. Au lycée les choses sont devenues plus floues avec la réforme Blanquer qui, si elle a des avantages, n'en a pas moins rendue plus opaque la spécialisation des élèves et leur sélection dans Parcoursup.</p>
+                    <p>Dans le supérieur, certaines filières sont professionnalisantes et, parmi elles, certaines augmentent de beaucoup les chances d'emploi. Cela ne signifie pas qu'elles sont les seules valables, mais il est bon de les connaître. De l'Université aux grandes écoles, ces filières existent mais sont méconnues (pour leurs avantages). Ce sont les filières sélectives (du bac+2 au bac+5/8).</p>
+                    <p>La <strong>non prise en compte du profil de l'enfant</strong> : en France, travail scolaire et orientation sont deux aspects du parcours souvent très dissociés. Or l'un ne va pas sans l'autre, sauf à ne pas viser de filière sélective. C'est un choix mais il doit être fait en conscience !</p>
+                    <p>Et si cela va parfois de pair, il faut comprendre qu'il vaut mieux <strong>viser une formation, un diplôme, qu'un métier !</strong></p>
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary class="faq-question">Depuis la réforme et la disparition des séries, est-il plus délicat de s'orienter ?</summary>
+                <div class="faq-answer">
+                    <p><strong>Oui !</strong></p>
+                    <p>Pour le lycée technologique (dont l'organisation n'a pas été réformée) les choses n'ont pas changé. Mais pour la voie générale si !</p>
+                    <p>Le fait de pouvoir choisir en 1ère ses matières fortes (les spécialités), sans aucune logique dictée, crée des profils de candidats qui peuvent avoir beaucoup de surprises au moment de Parcoursup !</p>
+                    <p>Ce choix s'opérant en fin de 2nde, au moment où les élèves et leur famille sont le moins préparés, génère des malentendus importants et parfois délétères !</p>
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary class="faq-question">Où sont organisées les réunions en présence ?</summary>
+                <div class="faq-answer">
+                    <p>À l'île de La Réunion où je réside. Dans le sud (Saint-Pierre, Saint-Louis, Étang-Salé).</p>
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary class="faq-question">Pour un bilan d'étape (accompagnement ponctuel), quel moment de l'année est le plus opportun ?</summary>
+                <div class="faq-answer">
+                    <p>Cela dépend de votre intention et de vos souhaits.</p>
+                    <p>En début d'année cela a l'avantage de fixer les objectifs en termes d'orientation et de s'en servir pour dynamiser l'investissement de votre enfant.</p>
+                    <p>⭐ Surtout <strong>avant les vacances de la Toussaint</strong> (octobre/novembre) car les premiers résultats sont tombés et vous disposez de toute l'année scolaire pour suivre l'évolution et plusieurs stratégies.</p>
+                    <p>Sur la fin de l'année, l'objectif est d'utiliser le bilan scolaire et d'adapter au mieux le projet d'orientation, de définir ou redéfinir la meilleure stratégie.</p>
+                </div>
+            </details>
+
+            <details class="faq-item">
+                <summary class="faq-question">Tous les parents doivent-ils se faire accompagner ?</summary>
+                <div class="faq-answer">
+                    <p>Cela dépend de votre connaissance du processus d'orientation et de l'accompagnement dont vous bénéficiez dans l'établissement de votre enfant.</p>
+                    <p>Si vous vous sentez perdu·e ou mal informé·e, je recommande de chercher un avis sur la situation de votre enfant, même sous la forme d'un point d'étape, une fois dans l'année.</p>
+                </div>
+            </details>
+
+        </div>
+    </div>
+</section>
+
 <!-- ═══ CTA FINAL ═══════════════════════════════════════════════════ -->
 <section class="section-purple">
     <div class="container text-center">
@@ -135,7 +262,7 @@
             <a href="{{ url_for('auth.inscription') }}" class="btn btn-white btn-lg">
                 Accéder aux conseils gratuits 🎁
             </a>
-            <a href="{{ url_for('public.contact') }}" class="btn btn-outline-white btn-lg">
+            <a href="{{ url_for('public.contact_general') }}" class="btn btn-outline-white btn-lg">
                 Nous contacter
             </a>
         </div>
